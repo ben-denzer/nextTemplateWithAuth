@@ -1,5 +1,4 @@
 import LinkWrapper from '@/components/Link';
-import SmallLogo from '@/components/SmallLogo';
 import AuthForm from '@/components/form/AuthForm';
 import AuthFormContainer from '@/components/form/AuthFormContainer';
 import AuthFormHeader from '@/components/form/AuthFormHeader';

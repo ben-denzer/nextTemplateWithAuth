@@ -1,0 +1,30 @@
+{
+  "Zod Object File": {
+    "prefix": "zobj",
+    "body": [
+      "import { z } from 'zod';",
+      "",
+      "export const z$TM_FILENAME_BASE = z.object({",
+      "  $1",
+      "});",
+      "",
+      "export type $TM_FILENAME_BASE = z.infer<typeof z$TM_FILENAME_BASE>",
+      ""
+    ],
+    "description": "zod interface"
+  },
+  "Zod Enum File": {
+    "prefix": "zenum",
+    "body": [
+      "import { z } from 'zod';",
+      "",
+      "export enum $TM_FILENAME_BASE {",
+      "  $1",
+      "}",
+      "",
+      "export const z$TM_FILENAME_BASE = z.nativeEnum($TM_FILENAME_BASE);",
+      ""
+    ],
+    "description": "zod enum"
+  }
+}
