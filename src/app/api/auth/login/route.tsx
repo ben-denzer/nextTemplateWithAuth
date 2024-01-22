@@ -1,12 +1,18 @@
-export async function POST(req: Request) {
-  const requestHeaders = req.headers;
-  const body = await req.json();
-  console.log({ requestHeaders, body });
+import { zLoginRequest } from '@/models/requestPayloads/LoginRequest';
+import { SUCCESS_RESPONSE, zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
+import resError from '@/utils/backend/resError';
+import resSuccess from '@/utils/backend/resSuccess';
+import validateReqBody from '@/utils/backend/validateReqBody';
 
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: {
-      'content-type': 'application/json',
-    },
-  });
+const zRequestType = zLoginRequest;
+const zResponseType = zSuccessResponse;
+
+export async function POST(req: Request) {
+  try {
+    validateReqBody(zRequestType, await req.json());
+
+    return resSuccess(zResponseType, SUCCESS_RESPONSE);
+  } catch (error) {
+    return resError(req, error);
+  }
 }

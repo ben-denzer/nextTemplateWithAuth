@@ -2,7 +2,7 @@
 import LinkWrapper from '@/components/Link';
 import AuthFormContainer from '@/components/form/AuthFormContainer';
 import AuthFormHeader from '@/components/form/AuthFormHeader';
-import { PageRoutes } from '@/models/routes';
+import { ApiRoutes, PageRoutes } from '@/models/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginRequest, zLoginRequest } from '@/models/requestPayloads/LoginRequest';
@@ -10,6 +10,8 @@ import { useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
+import fetchWrapper from '@/utils/fetchWrapper';
+import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -30,10 +32,13 @@ const Login: React.FC = () => {
     password: 'password',
   };
 
-  const onSubmit = (data: FormType) => {
+  const onSubmit = async (data: FormType) => {
+    setLoading(true);
     try {
-      console.log(data);
-      return;
+      await fetchWrapper('POST', ApiRoutes.LOGIN, data, {
+        zRequestType: zLoginRequest,
+        zResponseType: zSuccessResponse,
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -81,7 +86,7 @@ const Login: React.FC = () => {
               <Button
                 buttonStyle="submit"
                 type="submit"
-                loading={false}
+                loading={loading}
                 disabled={!!Object.keys(formErrors).length}
                 disabledCallback={() => {}}
               >

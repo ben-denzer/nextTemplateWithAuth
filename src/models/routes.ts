@@ -1,6 +1,7 @@
 export enum PageRoutes {
-  HOME = '/',
+  DASHBOARD = '/dashboard',
   FORGOT_PASSWORD = '/auth/forgot-password',
+  HOME = '/',
   LOGIN = '/auth/login',
   PASSWORD_RESET = '/auth/password-reset',
   REGISTER = '/auth/register',
