@@ -1,20 +1,18 @@
 import LinkWrapper from '@/components/Link';
 import SmallLogo from '@/components/SmallLogo';
+import AuthForm from '@/components/form/AuthForm';
+import AuthFormContainer from '@/components/form/AuthFormContainer';
+import AuthFormHeader from '@/components/form/AuthFormHeader';
 import { PageRoutes } from '@/models/routes';
 
 const Login: React.FC = () => {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <SmallLogo />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
+        <AuthFormHeader pageTitle="Sign in to your account" />
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+        <AuthFormContainer>
+          <AuthForm>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email address
@@ -37,9 +35,9 @@ const Login: React.FC = () => {
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  <LinkWrapper href={PageRoutes.FORGOT_PASSWORD} customClasses="font-semibold">
                     Forgot password?
-                  </a>
+                  </LinkWrapper>
                 </div>
               </div>
               <div className="mt-2">
@@ -62,15 +60,14 @@ const Login: React.FC = () => {
                 Sign in
               </button>
             </div>
-          </form>
-
+          </AuthForm>
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{' '}
             <LinkWrapper customClasses="font-semibold" href={PageRoutes.REGISTER}>
               Start a 14 day free trial
             </LinkWrapper>
           </p>
-        </div>
+        </AuthFormContainer>
       </div>
     </>
   );
