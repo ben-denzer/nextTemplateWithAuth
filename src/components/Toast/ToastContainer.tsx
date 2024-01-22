@@ -1,11 +1,12 @@
 import React from 'react';
 import { SharedToast, SharedToastProps } from './SharedToast';
+import IconType from '@/models/IconType';
 
 interface ToastContainerProps {
   HeadlessUiTransition: any;
-  CheckCircleIcon: React.FC<React.ComponentProps<'svg'>>;
-  ExclamationCircleIcon: React.FC<React.ComponentProps<'svg'>>;
-  XIcon: React.FC<React.ComponentProps<'svg'>>;
+  CheckCircleIcon: IconType;
+  ExclamationCircleIcon: IconType;
+  XIcon: IconType;
   toastMessages: Partial<SharedToastProps>[];
   setToastMessages: React.Dispatch<{
     type: 'ADD_ERROR' | 'ADD_SUCCESS' | 'REMOVE';

@@ -6,15 +6,18 @@ import { ApiRoutes, PageRoutes } from '@/models/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginRequest, zLoginRequest } from '@/models/requestPayloads/LoginRequest';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
 import fetchWrapper from '@/utils/fetchWrapper';
 import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
+import { ToastContext } from '@/contexts/toastContext';
+import getErrorMessage from '@/utils/getErrorMessage';
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const { setError, setSuccess } = useContext(ToastContext);
 
   type FormType = LoginRequest;
   const formSchema = zLoginRequest;
@@ -39,7 +42,9 @@ const Login: React.FC = () => {
         zRequestType: zLoginRequest,
         zResponseType: zSuccessResponse,
       });
+      setSuccess('Successfully logged in!');
     } catch (error) {
+      setError(getErrorMessage(error));
       console.error(error);
     } finally {
       setLoading(false);

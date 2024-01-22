@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { ToastType } from './toastMessagesReducer';
+import IconType from '@/models/IconType';
 
 export interface SharedToastProps {
   toastType: ToastType;
@@ -8,9 +9,9 @@ export interface SharedToastProps {
   showToast: boolean;
   messageId: string;
   HeadlessUiTransition: any;
-  CheckCircleIcon: React.FC<React.ComponentProps<'svg'>>;
-  ExclamationCircleIcon: React.FC<React.ComponentProps<'svg'>>;
-  XIcon: React.FC<React.ComponentProps<'svg'>>;
+  CheckCircleIcon: IconType;
+  ExclamationCircleIcon: IconType;
+  XIcon: IconType;
   closeToast: (messageId: string) => void;
 }
 
