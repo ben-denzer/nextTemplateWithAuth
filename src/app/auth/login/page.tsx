@@ -5,11 +5,15 @@ import AuthFormHeader from '@/components/form/AuthFormHeader';
 import { PageRoutes } from '@/models/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginRequest, zLoginRequest, LoginRequestFields } from '@/models/requestPayloads/LoginRequest';
+import { LoginRequest, zLoginRequest } from '@/models/requestPayloads/LoginRequest';
+import { useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
+import Button from '@/components/Button';
 
 const Login: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+
   type FormType = LoginRequest;
   const formSchema = zLoginRequest;
 
@@ -26,11 +30,15 @@ const Login: React.FC = () => {
     password: 'password',
   };
 
-  console.log({ formErrors });
-
   const onSubmit = (data: FormType) => {
-    console.log(data);
-    return;
+    try {
+      console.log(data);
+      return;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,12 +78,15 @@ const Login: React.FC = () => {
             />
 
             <div>
-              <button
+              <Button
+                buttonStyle="submit"
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-button-submit px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-button-submit-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-button-submit"
+                loading={false}
+                disabled={!!Object.keys(formErrors).length}
+                disabledCallback={() => {}}
               >
                 Sign in
-              </button>
+              </Button>
             </div>
           </form>
           <p className="mt-10 text-center text-sm text-gray-500">

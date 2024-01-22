@@ -6,4 +6,3 @@ export const zLoginRequest = z.object({
 });
 
 export type LoginRequest = z.infer<typeof zLoginRequest>;
-export type LoginRequestFields = keyof LoginRequest;
