@@ -1,4 +1,4 @@
-import { zLoginRequest } from '@/models/requestPayloads/LoginRequest';
+import { zLoginRequest } from '@/models/requestPayloads/auth/LoginRequest';
 import { SUCCESS_RESPONSE, zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
 import resError from '@/utils/backend/resError';
 import resSuccess from '@/utils/backend/resSuccess';

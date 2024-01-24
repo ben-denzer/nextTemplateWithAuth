@@ -6,14 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:db:push": "prisma db push"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.4",
+    "@prisma/client": "^5.8.1",
     "@tailwindcss/forms": "^0.5.7",
     "@types/uuid": "^9.0.7",
+    "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "next": "14.1.0",
     "react": "^18",
@@ -23,6 +27,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -31,6 +36,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
+    "prisma": "^5.8.1",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }
