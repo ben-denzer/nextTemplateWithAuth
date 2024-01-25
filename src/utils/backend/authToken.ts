@@ -1,6 +1,7 @@
 'use server';
 import jwt from 'jsonwebtoken';
 import prisma from './db';
+import { LogMetadata, Logger } from '../logger/Logger';
 
 const AUTH_TOKEN_EXPIRATION = '1m';
 
@@ -9,7 +10,10 @@ export interface AuthTokenData {
 }
 
 const signJwt = (data: AuthTokenData): Promise<string> => {
+  const method = 'authToken.signJwt';
+  const metadata: LogMetadata = { data };
   return new Promise((resolve, reject) => {
+    Logger.debug(method, 'signing jwt', metadata);
     jwt.sign(
       data,
       process.env.JWT_SECRET as string,
@@ -18,6 +22,7 @@ const signJwt = (data: AuthTokenData): Promise<string> => {
       },
       (err, token) => {
         if (err) {
+          Logger.error(method, 'caught', err, metadata);
           reject(err);
         } else {
           resolve(token as string);
@@ -28,9 +33,11 @@ const signJwt = (data: AuthTokenData): Promise<string> => {
 };
 
 const verifyJwt = (token: string): Promise<AuthTokenData> => {
+  const method = 'authToken.verifyJwt';
   return new Promise((resolve, reject) => {
     jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
       if (err) {
+        Logger.error(method, 'caught', err);
         reject(err);
       } else {
         resolve(decoded as AuthTokenData);
@@ -40,15 +47,23 @@ const verifyJwt = (token: string): Promise<AuthTokenData> => {
 };
 
 export const generateAuthToken = async (data: AuthTokenData): Promise<string> => {
+  const method = 'authToken.generateAuthToken';
+  const metadata: LogMetadata = { data };
   try {
+    Logger.triggered(method, metadata);
+
     const token = await signJwt(data);
+    Logger.debug(method, 'token signed', metadata);
+
     await prisma.userAuth.update({
       where: { id: Number(data.userId) },
       data: { token },
     });
 
+    Logger.success(method, metadata);
     return token;
   } catch (err) {
+    Logger.error(method, 'caught', err);
     throw err;
   }
 };
