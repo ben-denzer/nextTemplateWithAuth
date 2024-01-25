@@ -1,4 +1,4 @@
-export type LogMetadata = Record<'data', any>;
+export type LogMetadata = Record<string, any>;
 
 interface LogInfo {
   method: string;
@@ -8,6 +8,7 @@ interface LogInfo {
   errName?: string;
   errMessage?: string;
   errStack?: string;
+  errCode?: string;
 }
 
 export class Logger {
@@ -57,12 +58,18 @@ export class Logger {
     Logger.genericLog({ method, message, severity: 4, metadata: metadataWithError });
   }
 
-  private static getErrorInfo(error: unknown): { errName?: string; errMessage?: string; errStack?: string } {
+  private static getErrorInfo(error: unknown): {
+    errName?: string;
+    errMessage?: string;
+    errStack?: string;
+    errCode?: string;
+  } {
     if (error instanceof Error) {
       return {
         errName: error.name,
         errMessage: error.message,
         errStack: error.stack,
+        errCode: (error as any).code.toString(),
       };
     } else {
       return Logger.getErrorInfo(new Error('unknown error'));

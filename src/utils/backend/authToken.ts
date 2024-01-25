@@ -6,12 +6,12 @@ import { LogMetadata, Logger } from '../logger/Logger';
 const AUTH_TOKEN_EXPIRATION = '1m';
 
 export interface AuthTokenData {
-  userId: string;
+  userId: number;
 }
 
 const signJwt = (data: AuthTokenData): Promise<string> => {
   const method = 'authToken.signJwt';
-  const metadata: LogMetadata = { data };
+  const metadata: LogMetadata = data;
   return new Promise((resolve, reject) => {
     Logger.debug(method, 'signing jwt', metadata);
     jwt.sign(
@@ -48,7 +48,7 @@ const verifyJwt = (token: string): Promise<AuthTokenData> => {
 
 export const generateAuthToken = async (data: AuthTokenData): Promise<string> => {
   const method = 'authToken.generateAuthToken';
-  const metadata: LogMetadata = { data };
+  const metadata: LogMetadata = data;
   try {
     Logger.triggered(method, metadata);
 
@@ -76,7 +76,7 @@ export const verifyAuthToken = async (token: string): Promise<AuthTokenData> => 
     }
 
     const dbToken = await prisma.userAuth.findFirst({
-      where: { id: Number(verifiedFromClient.userId) },
+      where: { id: verifiedFromClient.userId },
       select: { token: true },
     });
     if (!dbToken?.token) {

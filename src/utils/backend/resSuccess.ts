@@ -1,4 +1,5 @@
 import { ZodEffects, ZodObject } from 'zod';
+import { Logger } from '../logger/Logger';
 
 const resSuccess = (
   schema: ZodObject<any> | ZodEffects<any>,
@@ -9,6 +10,8 @@ const resSuccess = (
   if (body) {
     schema.parse(body);
   }
+
+  Logger.debug('resSuccess', 'success', { body, status, customHeaders });
 
   return new Response(JSON.stringify(body), {
     status: status || 200,
