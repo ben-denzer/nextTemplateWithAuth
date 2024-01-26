@@ -68,8 +68,12 @@ export const generateAuthToken = async (data: AuthTokenData): Promise<string> =>
   }
 };
 
-export const verifyAuthToken = async (token: string): Promise<AuthTokenData> => {
+export const verifyAuthToken = async (token?: string | undefined | null): Promise<AuthTokenData> => {
   try {
+    if (!token) {
+      throw new AuthError('no token provided');
+    }
+
     const verifiedFromClient = await verifyJwt(token);
     if (!verifiedFromClient.userId) {
       throw new AuthError('invalid token');
