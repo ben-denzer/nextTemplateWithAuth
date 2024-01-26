@@ -1,9 +1,9 @@
 import { ZodEffects, ZodObject } from 'zod';
 import { Logger } from '../logger/Logger';
 
-const resSuccess = (
+const resSuccess = <T>(
   schema: ZodObject<any> | ZodEffects<any>,
-  body: Record<string, unknown>,
+  body: T,
   status?: number,
   customHeaders?: Record<string, string>
 ) => {

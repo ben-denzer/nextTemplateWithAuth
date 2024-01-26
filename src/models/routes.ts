@@ -1,5 +1,5 @@
 export enum PageRoutes {
-  DASHBOARD = '/dashboard',
+  DASHBOARD = '/application/dashboard',
   FORGOT_PASSWORD = '/auth/forgot-password',
   HOME = '/',
   LOGIN = '/auth/login',
@@ -8,8 +8,9 @@ export enum PageRoutes {
 }
 
 export enum ApiRoutes {
-  FORGOT_PASSWORD = '/api/auth/forgot-password',
-  LOGIN = '/api/auth/login',
-  PASSWORD_RESET = '/api/auth/password-reset',
-  REGISTER = '/api/auth/register',
+  CHECK_AUTH = '/api/open/auth/checkAuth',
+  FORGOT_PASSWORD = '/api/open/auth/forgot-password',
+  LOGIN = '/api/open/auth/login',
+  PASSWORD_RESET = '/api/open/auth/password-reset',
+  REGISTER = '/api/open/auth/register',
 }

@@ -1,52 +1,75 @@
 'use server';
-import jwt from 'jsonwebtoken';
+import * as jose from 'jose';
 import prisma from './db';
 import { LogMetadata, Logger } from '../logger/Logger';
+import { AuthError } from '@/models/errors/AuthError';
+import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
 
-const AUTH_TOKEN_EXPIRATION = '1m';
+const AUTH_TOKEN_EXPIRATION = '5m';
+const secret = new TextEncoder().encode(process.env.JWT_SECRET as string);
+const algorithm = 'HS256';
 
 export interface AuthTokenData {
   userId: number;
 }
 
-const signJwt = (data: AuthTokenData): Promise<string> => {
+const signJwt = async (data: AuthTokenData): Promise<string> => {
   const method = 'authToken.signJwt';
   const metadata: LogMetadata = data;
-  return new Promise((resolve, reject) => {
-    Logger.debug(method, 'signing jwt', metadata);
-    jwt.sign(
-      data,
-      process.env.JWT_SECRET as string,
-      {
-        expiresIn: AUTH_TOKEN_EXPIRATION,
-      },
-      (err, token) => {
-        if (err) {
-          Logger.error(method, 'caught', err, metadata);
-          reject(err);
-        } else {
-          resolve(token as string);
-        }
-      }
-    );
-  });
+  Logger.debug(method, 'signing jwt', metadata);
+
+  const token = await new jose.SignJWT({ data })
+    .setProtectedHeader({ alg: algorithm })
+    .setIssuedAt()
+    .setExpirationTime(AUTH_TOKEN_EXPIRATION)
+    .sign(secret);
+
+  Logger.debug(method, 'jwt signed', metadata);
+  return token;
 };
 
-const verifyJwt = (token: string): Promise<AuthTokenData> => {
+const verifyJwt = async (token: string): Promise<AuthTokenData> => {
   const method = 'authToken.verifyJwt';
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
-      if (err) {
-        Logger.error(method, 'caught', err);
-        reject(err);
-      } else {
-        resolve(decoded as AuthTokenData);
-      }
+  Logger.debug(method, 'verifying jwt');
+
+  if (!token) {
+    throw new AuthError('no token provided');
+  }
+
+  try {
+    const { payload } = await jose.jwtVerify(token, secret, {
+      algorithms: [algorithm],
     });
-  });
+    return payload.data as AuthTokenData;
+  } catch (err) {
+    Logger.error(method, 'caught', err);
+    throw new AuthError('invalid token');
+  }
 };
 
-export const generateAuthToken = async (data: AuthTokenData): Promise<string> => {
+export const authCookieOptions = (
+  authToken: string
+): {
+  name: string;
+  value: string;
+  httpOnly: boolean;
+  sameSite: 'strict';
+  secure: boolean;
+  path: string;
+} => {
+  return {
+    name: AUTH_TOKEN_COOKIE_NAME,
+    value: authToken,
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+  };
+};
+
+export const generateAuthToken = async (
+  data: AuthTokenData
+): Promise<string> => {
   const method = 'authToken.generateAuthToken';
   const metadata: LogMetadata = data;
   try {
@@ -68,7 +91,9 @@ export const generateAuthToken = async (data: AuthTokenData): Promise<string> =>
   }
 };
 
-export const verifyAuthToken = async (token?: string | undefined | null): Promise<AuthTokenData> => {
+export const verifyAuthToken = async (
+  token?: string | undefined | null
+): Promise<AuthTokenData> => {
   try {
     if (!token) {
       throw new AuthError('no token provided');

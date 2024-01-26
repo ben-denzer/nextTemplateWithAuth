@@ -1,4 +1,4 @@
-import { AUTH_TOKEN_COOKIE_NAME, SALT_ROUNDS } from '@/models/constants';
+import { SALT_ROUNDS } from '@/models/constants';
 import { SignupRequest, zSignupRequest } from '@/models/requestPayloads/auth/SignupRequest';
 import { SUCCESS_RESPONSE, zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
 import resError from '@/utils/backend/resError';
@@ -6,7 +6,7 @@ import resSuccess from '@/utils/backend/resSuccess';
 import validateReqBody from '@/utils/backend/validateReqBody';
 import bcrypt from 'bcrypt';
 import prisma from '@/utils/backend/db';
-import { generateAuthToken } from '@/utils/backend/authToken';
+import { authCookieOptions, generateAuthToken } from '@/utils/backend/authToken';
 import { cookies } from 'next/headers';
 import { LogMetadata, Logger } from '@/utils/logger/Logger';
 
@@ -36,14 +36,7 @@ export async function POST(req: Request) {
     });
 
     const authToken = await generateAuthToken({ userId: userAuthRecord.id });
-    cookies().set({
-      name: AUTH_TOKEN_COOKIE_NAME,
-      value: authToken,
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-    });
+    cookies().set(authCookieOptions(authToken));
     return resSuccess(zResponseType, SUCCESS_RESPONSE);
   } catch (error: any) {
     Logger.error(method, 'signup failed', error, metadata);

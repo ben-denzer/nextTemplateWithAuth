@@ -6,4 +6,4 @@ export const zSuccessResponse = z.object({
 
 export type SuccessResponse = z.infer<typeof zSuccessResponse>;
 
-export const SUCCESS_RESPONSE = { success: true };
+export const SUCCESS_RESPONSE: SuccessResponse = { success: true };

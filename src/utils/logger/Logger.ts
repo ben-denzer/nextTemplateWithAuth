@@ -1,3 +1,5 @@
+import { ErrorCodes } from '@/models/errors/ErrorCodes';
+
 export type LogMetadata = Record<string, any>;
 
 interface LogInfo {
@@ -32,30 +34,64 @@ export class Logger {
     Logger.genericLog({ method, message, severity: 2, metadata });
   }
 
-  public static error(method: string, message: string, error: unknown, metadata: LogMetadata = { data: {} }) {
+  public static error(
+    method: string,
+    message: string,
+    error: unknown,
+    metadata: LogMetadata = { data: {} }
+  ) {
     const errorInfo = Logger.getErrorInfo(error);
-    const metadataWithError: LogMetadata = { data: { ...metadata.data, errorInfo } };
+    const metadataWithError: LogMetadata = {
+      data: { ...metadata.data, errorInfo },
+    };
 
     // Auth errors do not belong as severity 3
     if (errorInfo.errName === ErrorCodes.AUTH_ERROR) {
-      Logger.genericLog({ method, message, severity: 1, metadata: metadataWithError });
+      Logger.genericLog({
+        method,
+        message,
+        severity: 1,
+        metadata: metadataWithError,
+      });
       return;
     }
 
-    Logger.genericLog({ method, message, severity: 3, metadata: metadataWithError });
+    Logger.genericLog({
+      method,
+      message,
+      severity: 3,
+      metadata: metadataWithError,
+    });
   }
 
-  public static fatal(method: string, message: string, error: unknown, metadata: LogMetadata = { data: {} }) {
+  public static fatal(
+    method: string,
+    message: string,
+    error: unknown,
+    metadata: LogMetadata = { data: {} }
+  ) {
     const errorInfo = Logger.getErrorInfo(error);
-    const metadataWithError: LogMetadata = { data: { ...metadata.data, errorInfo } };
+    const metadataWithError: LogMetadata = {
+      data: { ...metadata.data, errorInfo },
+    };
 
     // Auth errors do not belong as severity 4
     if (errorInfo.errName === ErrorCodes.AUTH_ERROR) {
-      Logger.genericLog({ method, message, severity: 1, metadata: metadataWithError });
+      Logger.genericLog({
+        method,
+        message,
+        severity: 1,
+        metadata: metadataWithError,
+      });
       return;
     }
 
-    Logger.genericLog({ method, message, severity: 4, metadata: metadataWithError });
+    Logger.genericLog({
+      method,
+      message,
+      severity: 4,
+      metadata: metadataWithError,
+    });
   }
 
   private static getErrorInfo(error: unknown): {
@@ -69,7 +105,7 @@ export class Logger {
         errName: error.name,
         errMessage: error.message,
         errStack: error.stack,
-        errCode: (error as any).code.toString(),
+        errCode: (error as any).code?.toString(),
       };
     } else {
       return Logger.getErrorInfo(new Error('unknown error'));
