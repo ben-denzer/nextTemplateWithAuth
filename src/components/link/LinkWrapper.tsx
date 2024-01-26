@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import classNames from '@/utils/classNames';
+import { LinkStyle } from './linkStyle';
 
 interface LinkProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface LinkProps {
 
 const LinkWrapper: React.FC<LinkProps> = ({ children, ...props }) => {
   return (
-    <Link href={props.href} className={classNames('text-link hover:text-link-hover', props.customClasses)}>
+    <Link href={props.href} className={LinkStyle(props.customClasses)}>
       {children}
     </Link>
   );

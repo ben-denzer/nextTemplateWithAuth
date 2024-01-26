@@ -47,7 +47,7 @@ async function fetchWrapper<T>(
   if (!res.ok || !resJson) {
     if (res.status === 401) {
       // log user out
-      window.location.assign(PageRoutes.LOGIN);
+      window.history.replaceState('', '', PageRoutes.LOGIN);
     }
 
     const errorBody = resJson || resText;

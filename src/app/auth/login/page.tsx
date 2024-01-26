@@ -1,11 +1,13 @@
 'use client';
-import LinkWrapper from '@/components/Link';
 import AuthFormContainer from '@/components/form/AuthFormContainer';
 import AuthFormHeader from '@/components/form/AuthFormHeader';
 import { ApiRoutes, PageRoutes } from '@/models/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginRequest, zLoginRequest } from '@/models/requestPayloads/auth/LoginRequest';
+import {
+  LoginRequest,
+  zLoginRequest,
+} from '@/models/requestPayloads/auth/LoginRequest';
 import { useContext, useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
@@ -14,10 +16,13 @@ import fetchWrapper from '@/utils/fetchWrapper';
 import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
 import { ToastContext } from '@/contexts/toastContext';
 import getErrorMessage from '@/utils/getErrorMessage';
+import { useRouter } from 'next/navigation';
+import LinkWrapper from '@/components/link/LinkWrapper';
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { setError, setSuccess } = useContext(ToastContext);
+  const router = useRouter();
 
   type FormType = LoginRequest;
   const formSchema = zLoginRequest;
@@ -43,6 +48,7 @@ const Login: React.FC = () => {
         zResponseType: zSuccessResponse,
       });
       setSuccess('Successfully logged in!');
+      router.push(PageRoutes.DASHBOARD);
     } catch (error) {
       setError(getErrorMessage(error));
       console.error(error);
@@ -73,7 +79,10 @@ const Login: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <InputLabel label="Password" id="password" required={true} />
                   <div className="text-sm">
-                    <LinkWrapper href={PageRoutes.FORGOT_PASSWORD} customClasses="font-semibold">
+                    <LinkWrapper
+                      href={PageRoutes.FORGOT_PASSWORD}
+                      customClasses="font-semibold"
+                    >
                       Forgot password?
                     </LinkWrapper>
                   </div>
@@ -101,7 +110,10 @@ const Login: React.FC = () => {
           </form>
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{' '}
-            <LinkWrapper customClasses="font-semibold" href={PageRoutes.REGISTER}>
+            <LinkWrapper
+              customClasses="font-semibold"
+              href={PageRoutes.REGISTER}
+            >
               Start a 14 day free trial
             </LinkWrapper>
           </p>

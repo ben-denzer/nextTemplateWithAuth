@@ -1,5 +1,4 @@
 'use client';
-import LinkWrapper from '@/components/Link';
 import AuthFormContainer from '@/components/form/AuthFormContainer';
 import AuthFormHeader from '@/components/form/AuthFormHeader';
 import { ApiRoutes, PageRoutes } from '@/models/routes';
@@ -12,11 +11,17 @@ import fetchWrapper from '@/utils/fetchWrapper';
 import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
 import { ToastContext } from '@/contexts/toastContext';
 import getErrorMessage from '@/utils/getErrorMessage';
-import { SignupRequest, zSignupRequest } from '@/models/requestPayloads/auth/SignupRequest';
+import {
+  SignupRequest,
+  zSignupRequest,
+} from '@/models/requestPayloads/auth/SignupRequest';
+import { useRouter } from 'next/navigation';
+import LinkWrapper from '@/components/link/LinkWrapper';
 
 const Signup: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { setError, setSuccess } = useContext(ToastContext);
+  const router = useRouter();
 
   type FormType = SignupRequest;
   const formSchema = zSignupRequest;
@@ -43,6 +48,7 @@ const Signup: React.FC = () => {
         zResponseType: zSuccessResponse,
       });
       setSuccess('Success!');
+      router.push(PageRoutes.DASHBOARD);
     } catch (error) {
       setError(getErrorMessage(error));
       console.error(error);
