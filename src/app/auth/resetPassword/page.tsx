@@ -21,6 +21,7 @@ import {
   zResetPasswordPayload,
 } from '@/models/requestPayloads/auth/ResetPassword';
 import { getQueryParam } from '@/utils/frontend/getQueryParam';
+import { showFormError } from '@/utils/frontend/showFormError';
 
 const ResetPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -80,18 +81,12 @@ const ResetPassword: React.FC = () => {
     }
   };
 
-  const showFormError = () => {
-    const formErrorKey = Object.keys(formErrors)[0] as keyof FormType;
-    const formErrorMessage = formErrors[formErrorKey]?.message;
-    if (formErrorMessage) {
-      setError(formErrorMessage);
-    } else {
-      setError('Please fix any form errors');
-    }
+  const displayFormError = () => {
+    showFormError<FormType>(formErrors, setError);
   };
 
   useEffect(() => {
-    showFormError;
+    displayFormError();
   }, [formErrors]);
 
   return (
@@ -136,7 +131,7 @@ const ResetPassword: React.FC = () => {
                 type="submit"
                 loading={loading}
                 disabled={!!Object.keys(formErrors).length}
-                disabledCallback={showFormError}
+                disabledCallback={displayFormError}
               >
                 Submit
               </Button>
