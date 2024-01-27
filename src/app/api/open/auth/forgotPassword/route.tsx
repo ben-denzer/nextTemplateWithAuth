@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       tokenType: 'forgotPassword',
     });
 
-    const resetLink = `${BASE_URL}/auth/resetPassword?token=${forgotPwToken}`;
+    const resetLink = `${BASE_URL}/auth/resetPassword?email=${body.email}&token=${forgotPwToken}`;
     metadata.resetLink = resetLink;
 
     Logger.debug(method, 'reset link generated', metadata);
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       from: 'no-reply@bdenzer.com',
       to: body.email,
       subject: 'Reset your password',
-      html: `<p>Click this link to reset your password: <a href="${resetLink}">${resetLink}</a></p>`,
+      html: `<p>Click this link to reset your password. It is valid for 72 hours: <a href="${resetLink}">${resetLink}</a></p>`,
     });
 
     Logger.success(method, metadata);

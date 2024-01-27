@@ -1,11 +1,11 @@
-import { MIN_PASSWORD_LENGTH } from '@/models/constants';
+import { zEmail, zPassword } from '@/models/sharedZodTypes';
 import { z } from 'zod';
 
 export const zSignupRequest = z
   .object({
-    email: z.string().email(),
-    password: z.string().min(MIN_PASSWORD_LENGTH),
-    password2: z.string().min(MIN_PASSWORD_LENGTH),
+    email: zEmail,
+    password: zPassword,
+    password2: zPassword,
   })
   .refine((data) => data.password === data.password2, {
     message: 'Passwords must match',

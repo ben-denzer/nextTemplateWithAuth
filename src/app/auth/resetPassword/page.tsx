@@ -15,38 +15,54 @@ import {
 import { ToastContext } from '@/contexts/toastContext';
 import getErrorMessage from '@/utils/helpers/getErrorMessage';
 import { useRouter } from 'next/navigation';
-import { EmailOnly, zEmailOnly } from '@/models/requestPayloads/auth/EmailOnly';
-import { wait } from '@/utils/helpers/wait';
+import {
+  ResetPasswordForm,
+  zResetPasswordForm,
+  zResetPasswordPayload,
+} from '@/models/requestPayloads/auth/ResetPassword';
+import { getQueryParam } from '@/utils/frontend/getQueryParam';
 
-const Login: React.FC = () => {
+const ResetPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { setError, setSuccess } = useContext(ToastContext);
   const router = useRouter();
 
-  type FormType = EmailOnly;
-  const formSchema = zEmailOnly;
+  type FormType = ResetPasswordForm;
+  const formSchema = zResetPasswordForm;
 
   const {
     register,
     handleSubmit,
     formState: { errors: formErrors },
+    setValue,
   } = useForm<FormType>({
     resolver: zodResolver(formSchema),
   });
 
+  useEffect(() => {
+    const email = getQueryParam('email');
+    if (email) {
+      setValue('email', email);
+    }
+  }, []);
+
   const fieldNames: Record<keyof FormType, keyof FormType> = {
     email: 'email',
+    password: 'password',
+    password2: 'password2',
   };
 
-  const onSubmit = async (data: FormType) => {
+  const onSubmit = async (formData: FormType) => {
     setLoading(true);
+    const token = getQueryParam('token');
+    const payload = { ...formData, token };
     try {
       const res = await fetchWrapper<SuccessResponse>(
         'POST',
         ApiRoutes.FORGOT_PASSWORD,
-        data,
+        payload,
         {
-          zRequestType: formSchema,
+          zRequestType: zResetPasswordPayload,
           zResponseType: zSuccessResponse,
         }
       );
@@ -55,9 +71,8 @@ const Login: React.FC = () => {
         throw new Error(res.displayMessage);
       }
 
-      setSuccess('Success! Check your inbox for a reset link.');
-      await wait(3);
-      router.push(PageRoutes.LOGIN);
+      setSuccess('Success!');
+      router.push(PageRoutes.DASHBOARD);
     } catch (error) {
       setError(getErrorMessage(error));
     } finally {
@@ -82,19 +97,37 @@ const Login: React.FC = () => {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <AuthFormHeader pageTitle="Forgot password" />
+        <AuthFormHeader pageTitle="Reset password" />
 
         <AuthFormContainer>
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <RhfTextInputWithLabel
-              autoFocus={true}
               label="Email address"
               register={register}
               id={fieldNames.email}
               type="email"
               error={!!formErrors.email}
               required={true}
-              autoComplete="email"
+              disabled={true}
+            />
+
+            <RhfTextInputWithLabel
+              autoFocus={true}
+              label="Password"
+              register={register}
+              id={fieldNames.password}
+              type="password"
+              error={!!formErrors.password}
+              required={true}
+            />
+
+            <RhfTextInputWithLabel
+              label="Confirm Password"
+              register={register}
+              id={fieldNames.password2}
+              type="password"
+              error={!!formErrors.password2}
+              required={true}
             />
 
             <div>
@@ -115,4 +148,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;

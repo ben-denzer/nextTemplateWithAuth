@@ -31,7 +31,7 @@ const Button: React.FC<ButtonProps> = (props) => {
 
   let styles = commonStyles;
   if (disabled || loading) {
-    styles = `${commonStyles} bg-lighttext text-lighttext cursor-not-allowed`;
+    styles = `${commonStyles} bg-lighttext text-white cursor-not-allowed`;
   } else if (buttonStyle === 'submit') {
     styles = `${commonStyles} bg-button-submit text-button-submit-textcolor hover:bg-button-submit-hover focus-visible:outline-button-submit`;
   } else if (buttonStyle === 'info') {

@@ -19,9 +19,9 @@ const RhfTextInput: React.FC<RhfTextInputProps> = (props) => {
 
   let styles = commonStyles;
   if (error) {
-    styles = `${commonStyles} ring-red-500 focus:ring-primary-600`;
+    styles = `${commonStyles} ring-red-500 focus:ring-red-600`;
   } else if (props.disabled) {
-    styles = `${commonStyles} bg-lighttext ring-lighttext focus:ring-lighttext`;
+    styles = `${commonStyles} bg-extralighttext ring-extralighttext focus:ring-extralighttext`;
   } else {
     styles = `${commonStyles} ring-gray-300 focus:ring-primary-600`;
   }

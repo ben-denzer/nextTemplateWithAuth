@@ -8,7 +8,7 @@ import {
   LoginRequest,
   zLoginRequest,
 } from '@/models/requestPayloads/auth/LoginRequest';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
@@ -73,6 +73,20 @@ const Login: React.FC = () => {
     }
   };
 
+  const showFormError = () => {
+    const formErrorKey = Object.keys(formErrors)[0] as keyof FormType;
+    const formErrorMessage = formErrors[formErrorKey]?.message;
+    if (formErrorMessage) {
+      setError(formErrorMessage);
+    } else {
+      setError('Please fix any form errors');
+    }
+  };
+
+  useEffect(() => {
+    showFormError;
+  }, [formErrors]);
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -81,6 +95,7 @@ const Login: React.FC = () => {
         <AuthFormContainer>
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <RhfTextInputWithLabel
+              autoFocus={true}
               label="Email address"
               register={register}
               id={fieldNames.email}
@@ -118,9 +133,7 @@ const Login: React.FC = () => {
                 type="submit"
                 loading={loading}
                 disabled={!!Object.keys(formErrors).length}
-                disabledCallback={() => {
-                  setError('Please fill in all required fields');
-                }}
+                disabledCallback={showFormError}
               >
                 Sign in
               </Button>

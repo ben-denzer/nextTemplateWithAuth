@@ -6,7 +6,9 @@ import { AuthError } from '@/models/errors/AuthError';
 import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
 
 const AUTH_TOKEN_EXPIRATION_DAYS = 1;
-const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}m`;
+const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}d`;
+const FORGOT_PW_TOKEN_EXPIRATION = '3d';
+
 const secret = new TextEncoder().encode(process.env.JWT_SECRET as string);
 const algorithm = 'HS256';
 
@@ -20,10 +22,15 @@ const signJwt = async (data: AuthTokenData): Promise<string> => {
   const metadata: LogMetadata = data;
   Logger.debug(method, 'signing jwt', metadata);
 
+  const expiration =
+    data.tokenType === 'login'
+      ? AUTH_TOKEN_EXPIRATION
+      : FORGOT_PW_TOKEN_EXPIRATION;
+
   const token = await new jose.SignJWT({ data })
     .setProtectedHeader({ alg: algorithm })
     .setIssuedAt()
-    .setExpirationTime(AUTH_TOKEN_EXPIRATION)
+    .setExpirationTime(expiration)
     .sign(secret);
 
   Logger.debug(method, 'jwt signed', metadata);

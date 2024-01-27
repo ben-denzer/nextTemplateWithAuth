@@ -4,7 +4,7 @@ import AuthFormHeader from '@/components/form/AuthFormHeader';
 import { ApiRoutes, PageRoutes } from '@/models/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
 import fetchWrapper from '@/utils/frontend/fetchWrapper';
@@ -78,6 +78,20 @@ const Signup: React.FC = () => {
     }
   };
 
+  const showFormError = () => {
+    const formErrorKey = Object.keys(formErrors)[0] as keyof FormType;
+    const formErrorMessage = formErrors[formErrorKey]?.message;
+    if (formErrorMessage) {
+      setError(formErrorMessage);
+    } else {
+      setError('Please fix any form errors');
+    }
+  };
+
+  useEffect(() => {
+    showFormError;
+  }, [formErrors]);
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -93,6 +107,7 @@ const Signup: React.FC = () => {
               error={!!formErrors.email}
               required={true}
               autoComplete="email"
+              autoFocus={true}
             />
 
             <RhfTextInputWithLabel
@@ -119,9 +134,7 @@ const Signup: React.FC = () => {
                 type="submit"
                 loading={loading}
                 disabled={!!Object.keys(formErrors).length}
-                disabledCallback={() => {
-                  setError('Please fix any form errors');
-                }}
+                disabledCallback={showFormError}
               >
                 Sign up
               </Button>
