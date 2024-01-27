@@ -1,6 +1,6 @@
 'use server';
 import * as jose from 'jose';
-import prisma from './db';
+import { prisma } from './prisma';
 import { LogMetadata, Logger } from '../logger/Logger';
 import { AuthError } from '@/models/errors/AuthError';
 import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
@@ -11,6 +11,7 @@ const algorithm = 'HS256';
 
 export interface AuthTokenData {
   userId: number;
+  tokenType: 'login' | 'forgotPassword';
 }
 
 const signJwt = async (data: AuthTokenData): Promise<string> => {
@@ -78,9 +79,12 @@ export const generateAuthToken = async (
     const token = await signJwt(data);
     Logger.debug(method, 'token signed', metadata);
 
-    await prisma.userAuth.update({
-      where: { id: Number(data.userId) },
-      data: { token },
+    await prisma.authToken.create({
+      data: {
+        user: { connect: { id: data.userId } },
+        token,
+        tokenType: data.tokenType,
+      },
     });
 
     Logger.success(method, metadata);
@@ -104,16 +108,16 @@ export const verifyAuthToken = async (
       throw new AuthError('invalid token');
     }
 
-    const dbToken = await prisma.userAuth.findFirst({
-      where: { id: verifiedFromClient.userId },
-      select: { token: true },
+    const dbToken = await prisma.authToken.findFirst({
+      where: {
+        token,
+        tokenType: verifiedFromClient.tokenType,
+        userId: verifiedFromClient.userId,
+      },
+      select: { id: true },
     });
-    if (!dbToken?.token) {
+    if (!dbToken?.id) {
       throw new AuthError('no token in DB');
-    }
-
-    if (dbToken.token !== token) {
-      throw new AuthError('token mismatch');
     }
 
     return verifiedFromClient;

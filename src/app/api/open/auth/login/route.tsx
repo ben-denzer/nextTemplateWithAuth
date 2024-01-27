@@ -10,7 +10,7 @@ import resError from '@/utils/backend/resError';
 import resSuccess from '@/utils/backend/resSuccess';
 import validateReqBody from '@/utils/backend/validateReqBody';
 import { LogMetadata, Logger } from '@/utils/logger/Logger';
-import prisma from '@/utils/backend/db';
+import { prisma } from '@/utils/backend/prisma';
 import bcrypt from 'bcrypt';
 import { AuthError } from '@/models/errors/AuthError';
 import {
@@ -58,7 +58,10 @@ export async function POST(req: Request) {
       throw new AuthError('Password does not match');
     }
 
-    const authToken = await generateAuthToken({ userId: userAuthRecord.id });
+    const authToken = await generateAuthToken({
+      userId: userAuthRecord.id,
+      tokenType: 'login',
+    });
     cookies().set(authCookieOptions(authToken));
 
     return resSuccess(zResponseType, SUCCESS_RESPONSE);

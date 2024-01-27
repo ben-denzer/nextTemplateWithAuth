@@ -12,5 +12,14 @@ model UserAuth {
   createdAt DateTime @default(now())
   username  String   @unique
   password  String
-  token     String?
+  tokens    AuthToken[]
+}
+
+model AuthToken {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  token     String   @unique
+  tokenType String
+  user      UserAuth @relation(fields: [userId], references: [id])
+  userId    Int
 }

@@ -8,7 +8,10 @@ import { useContext, useState } from 'react';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
 import fetchWrapper from '@/utils/fetchWrapper';
-import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
+import {
+  SuccessResponse,
+  zSuccessResponse,
+} from '@/models/responsePayloads/SuccessResponse';
 import { ToastContext } from '@/contexts/toastContext';
 import getErrorMessage from '@/utils/getErrorMessage';
 import {
@@ -30,6 +33,7 @@ const Signup: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors: formErrors },
+    setError: setFormError,
   } = useForm<FormType>({
     resolver: zodResolver(formSchema),
   });
@@ -43,10 +47,28 @@ const Signup: React.FC = () => {
   const onSubmit = async (data: FormType) => {
     setLoading(true);
     try {
-      await fetchWrapper('POST', ApiRoutes.REGISTER, data, {
-        zRequestType: zSignupRequest,
-        zResponseType: zSuccessResponse,
-      });
+      const signupRes = await fetchWrapper<SuccessResponse>(
+        'POST',
+        ApiRoutes.REGISTER,
+        data,
+        {
+          zRequestType: zSignupRequest,
+          zResponseType: zSuccessResponse,
+        }
+      );
+
+      if (!signupRes.success) {
+        if (signupRes.status === 409) {
+          setError('Email already in use');
+          setFormError(fieldNames.email, {
+            type: 'manual',
+            message: 'Email already in use',
+          });
+          return;
+        }
+        throw new Error(signupRes.displayMessage);
+      }
+
       setSuccess('Success!');
       router.push(PageRoutes.DASHBOARD);
     } catch (error) {
@@ -98,7 +120,9 @@ const Signup: React.FC = () => {
                 type="submit"
                 loading={loading}
                 disabled={!!Object.keys(formErrors).length}
-                disabledCallback={() => {}}
+                disabledCallback={() => {
+                  setError('Please fix any form errors');
+                }}
               >
                 Sign up
               </Button>

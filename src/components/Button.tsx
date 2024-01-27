@@ -1,5 +1,6 @@
 import classNames from '@/utils/classNames';
 import LoadingSpinner from './LoadingSpinner';
+import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   customClasses?: string;
@@ -43,12 +44,18 @@ const Button: React.FC<ButtonProps> = (props) => {
   // so even when it is "disabled", we don't want to tell the DOM that... unless there is no disabledCallback provided
   const actuallyDisableButton = (disabled && !disabledCallback) || loading;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
     if (loading) {
+      e.preventDefault();
+      e.stopPropagation();
       return;
     }
-    if (disabled && disabledCallback) {
-      disabledCallback();
+    if (disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (disabledCallback) {
+        disabledCallback();
+      }
       return;
     }
     if (onClick) {

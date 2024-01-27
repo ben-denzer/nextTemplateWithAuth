@@ -11,13 +11,14 @@ import resError from '@/utils/backend/resError';
 import resSuccess from '@/utils/backend/resSuccess';
 import validateReqBody from '@/utils/backend/validateReqBody';
 import bcrypt from 'bcrypt';
-import prisma from '@/utils/backend/db';
+import { prisma } from '@/utils/backend/prisma';
 import {
   authCookieOptions,
   generateAuthToken,
 } from '@/utils/backend/authToken';
 import { cookies } from 'next/headers';
 import { LogMetadata, Logger } from '@/utils/logger/Logger';
+import { ConflictError } from '@/models/errors/ConflictError';
 
 type RequestBody = SignupRequest;
 const zRequestType = zSignupRequest;
@@ -45,15 +46,21 @@ export async function POST(req: Request) {
         password: hashed,
       },
     });
+    Logger.debug(method, 'userAuth record created', metadata);
 
-    const authToken = await generateAuthToken({ userId: userAuthRecord.id });
+    const authToken = await generateAuthToken({
+      userId: userAuthRecord.id,
+      tokenType: 'login',
+    });
+
     cookies().set(authCookieOptions(authToken));
 
+    Logger.success(method, metadata);
     return resSuccess(zResponseType, SUCCESS_RESPONSE);
   } catch (error: any) {
     Logger.error(method, 'signup failed', error, metadata);
     if (error.code === 'P2002') {
-      return resError(req, error, 409);
+      return resError(req, new ConflictError('Email already in use'));
     }
     return resError(req, error);
   }
