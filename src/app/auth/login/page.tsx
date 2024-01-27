@@ -13,7 +13,10 @@ import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
 import fetchWrapper from '@/utils/fetchWrapper';
-import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
+import {
+  SuccessResponse,
+  zSuccessResponse,
+} from '@/models/responsePayloads/SuccessResponse';
 import { ToastContext } from '@/contexts/toastContext';
 import getErrorMessage from '@/utils/getErrorMessage';
 import { useRouter } from 'next/navigation';
@@ -43,10 +46,24 @@ const Login: React.FC = () => {
   const onSubmit = async (data: FormType) => {
     setLoading(true);
     try {
-      await fetchWrapper('POST', ApiRoutes.LOGIN, data, {
-        zRequestType: zLoginRequest,
-        zResponseType: zSuccessResponse,
-      });
+      const loginRes = await fetchWrapper<SuccessResponse>(
+        'POST',
+        ApiRoutes.LOGIN,
+        data,
+        {
+          zRequestType: zLoginRequest,
+          zResponseType: zSuccessResponse,
+        }
+      );
+
+      if (!loginRes.success) {
+        if (loginRes.status === 401) {
+          setError('Incorrect email or password');
+          return;
+        }
+        throw new Error(loginRes.displayMessage);
+      }
+
       setSuccess('Successfully logged in!');
       router.push(PageRoutes.DASHBOARD);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { ErrorCodes } from '@/models/errors/ErrorCodes';
+import { AuthError } from '@/models/errors/AuthError';
 
 export type LogMetadata = Record<string, any>;
 
@@ -46,7 +46,7 @@ export class Logger {
     };
 
     // Auth errors do not belong as severity 3
-    if (errorInfo.errName === ErrorCodes.AUTH_ERROR) {
+    if (error instanceof AuthError) {
       Logger.genericLog({
         method,
         message,
@@ -76,7 +76,7 @@ export class Logger {
     };
 
     // Auth errors do not belong as severity 4
-    if (errorInfo.errName === ErrorCodes.AUTH_ERROR) {
+    if (error instanceof AuthError) {
       Logger.genericLog({
         method,
         message,

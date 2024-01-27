@@ -1,4 +1,4 @@
-import { ErrorCodes } from '@/models/errors/ErrorCodes';
+import { InvalidRequestPayloadError } from '@/models/errors/InvalidRequestPayloadError';
 import { ZodEffects, ZodObject } from 'zod';
 
 const validateReqBody = (
@@ -12,7 +12,7 @@ const validateReqBody = (
   const parsed = schema.safeParse(body);
 
   if (!parsed.success) {
-    throw new Error(ErrorCodes.INVALID_REQUEST_BODY);
+    throw new InvalidRequestPayloadError('Invalid request payload');
   }
 };
 

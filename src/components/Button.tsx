@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   } = props;
 
   const commonStyles =
-    'flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
+    'flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 min-h-[36px]';
 
   let styles = commonStyles;
   if (disabled || loading) {
@@ -66,7 +66,7 @@ const Button: React.FC<ButtonProps> = (props) => {
     >
       {loading ? (
         <div className="flex items-center justify-center">
-          <LoadingSpinner size={15} color="light" />
+          <LoadingSpinner size={20} color="light" />
         </div>
       ) : (
         children

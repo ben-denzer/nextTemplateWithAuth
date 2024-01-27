@@ -13,7 +13,7 @@ async function fetchWrapper<T>(
   options?: {
     headers?: Record<string, string>;
   }
-): Promise<T> {
+): Promise<T | ErrorResponse> {
   if (body) {
     if (!validation.zRequestType) {
       throw new Error('Validation for request body is required');
@@ -44,16 +44,16 @@ async function fetchWrapper<T>(
     // do nothing
   }
 
-  if (!res.ok || !resJson) {
-    if (res.status === 401) {
+  if (!res.ok) {
+    if (res.status === 401 && !window.location.pathname.startsWith('/auth/')) {
       // log user out
-      window.history.replaceState('', '', PageRoutes.LOGIN);
+      window.location.replace(PageRoutes.LOGIN);
     }
 
     const errorBody = resJson || resText;
     // log errorBody
     if (isErrorResponse(errorBody)) {
-      throw new Error(errorBody.displayMessage);
+      return errorBody;
     }
     throw new Error('Something went wrong. Please try again');
   }
