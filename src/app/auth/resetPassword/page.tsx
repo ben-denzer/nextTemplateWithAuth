@@ -59,7 +59,7 @@ const ResetPassword: React.FC = () => {
     try {
       const res = await fetchWrapper<SuccessResponse>(
         'POST',
-        ApiRoutes.FORGOT_PASSWORD,
+        ApiRoutes.PASSWORD_RESET,
         payload,
         {
           zRequestType: zResetPasswordPayload,

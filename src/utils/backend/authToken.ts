@@ -4,6 +4,7 @@ import { prisma } from './prisma';
 import { LogMetadata, Logger } from '../logger/Logger';
 import { AuthError } from '@/models/errors/AuthError';
 import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
+import { TokenType } from '@prisma/client';
 
 const AUTH_TOKEN_EXPIRATION_DAYS = 1;
 const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}d`;
@@ -14,7 +15,7 @@ const algorithm = 'HS256';
 
 export interface AuthTokenData {
   userId: number;
-  tokenType: 'login' | 'forgotPassword';
+  tokenType: TokenType;
 }
 
 const signJwt = async (data: AuthTokenData): Promise<string> => {
@@ -107,8 +108,8 @@ export const generateAuthToken = async (
 };
 
 export const verifyAuthToken = async (
-  token?: string | undefined | null,
-  tokenType: 'login' | 'forgotPassword' = 'login'
+  token: string | undefined | null,
+  tokenType: TokenType
 ): Promise<AuthTokenData> => {
   try {
     if (!token) {

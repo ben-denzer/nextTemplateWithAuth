@@ -14,6 +14,7 @@ import { wait } from '@/utils/helpers/wait';
 import * as FormData from 'form-data';
 import Mailgun from 'mailgun.js';
 import { BASE_URL } from '@/models/constants';
+import { PageRoutes } from '@/models/routes';
 
 const mailgun = new Mailgun(FormData as any);
 const DOMAIN = process.env.MAILGUN_DOMAIN as string;
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
       tokenType: 'forgotPassword',
     });
 
-    const resetLink = `${BASE_URL}/auth/resetPassword?email=${body.email}&token=${forgotPwToken}`;
+    const resetLink = `${BASE_URL}${PageRoutes.PASSWORD_RESET}?email=${body.email}&token=${forgotPwToken}`;
     metadata.resetLink = resetLink;
 
     Logger.debug(method, 'reset link generated', metadata);

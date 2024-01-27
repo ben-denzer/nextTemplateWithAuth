@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     }
 
     try {
-      await verifyAuthToken(authToken);
+      await verifyAuthToken(authToken, 'login');
     } catch (err) {
       try {
         await prisma.authToken.delete({

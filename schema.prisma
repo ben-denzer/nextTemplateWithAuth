@@ -15,11 +15,16 @@ model UserAuth {
   tokens    AuthToken[]
 }
 
+enum TokenType {
+  login
+  forgotPassword
+}
+
 model AuthToken {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   token     String   @unique
-  tokenType String
-  user      UserAuth @relation(fields: [userId], references: [id])
+  tokenType TokenType
+  user      UserAuth @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
