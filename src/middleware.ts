@@ -6,7 +6,7 @@ import { AUTH_TOKEN_COOKIE_NAME } from './models/constants';
 
 const BASE_URL = process.env.BASE_URL;
 
-export async function middleware(request: NextRequest, response: NextResponse) {
+export async function middleware(request: NextRequest) {
   const requestPath = request.nextUrl.pathname;
   const requestMethod = request.method;
 
