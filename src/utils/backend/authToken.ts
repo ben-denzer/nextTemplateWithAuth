@@ -100,7 +100,8 @@ export const generateAuthToken = async (
 };
 
 export const verifyAuthToken = async (
-  token?: string | undefined | null
+  token?: string | undefined | null,
+  tokenType: 'login' | 'forgotPassword' = 'login'
 ): Promise<AuthTokenData> => {
   try {
     if (!token) {
@@ -110,6 +111,10 @@ export const verifyAuthToken = async (
     const verifiedFromClient = await verifyJwt(token);
     if (!verifiedFromClient.userId) {
       throw new AuthError('invalid token');
+    }
+
+    if (verifiedFromClient.tokenType !== tokenType) {
+      throw new AuthError('invalid token type');
     }
 
     const dbToken = await prisma.authToken.findFirst({

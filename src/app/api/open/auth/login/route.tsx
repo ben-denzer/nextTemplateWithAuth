@@ -19,6 +19,7 @@ import {
   generateAuthToken,
 } from '@/utils/backend/authToken';
 import { cookies } from 'next/headers';
+import { wait } from '@/utils/helpers/wait';
 
 type RequestBody = LoginRequest;
 const zRequestType = zLoginRequest;
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
   const method = 'POST /api/open/auth/login';
   const metadata: LogMetadata = {};
   try {
+    await wait(1);
     Logger.triggered(method, metadata);
 
     const body: RequestBody = await req.json();

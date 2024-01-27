@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
         ApiRoutes.REGISTER,
         data,
         {
-          zRequestType: zSignupRequest,
+          zRequestType: formSchema,
           zResponseType: zSuccessResponse,
         }
       );
@@ -73,7 +73,6 @@ const Signup: React.FC = () => {
       router.push(PageRoutes.DASHBOARD);
     } catch (error) {
       setError(getErrorMessage(error));
-      console.error(error);
     } finally {
       setLoading(false);
     }

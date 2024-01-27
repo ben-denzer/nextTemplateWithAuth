@@ -2,9 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { ApiRoutes, PageRoutes } from './models/routes';
-import { AUTH_TOKEN_COOKIE_NAME } from './models/constants';
-
-const BASE_URL = process.env.BASE_URL;
+import { AUTH_TOKEN_COOKIE_NAME, BASE_URL } from './models/constants';
 
 export async function middleware(request: NextRequest) {
   const requestPath = request.nextUrl.pathname;

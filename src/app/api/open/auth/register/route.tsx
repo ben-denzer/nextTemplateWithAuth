@@ -19,6 +19,7 @@ import {
 import { cookies } from 'next/headers';
 import { LogMetadata, Logger } from '@/utils/logger/Logger';
 import { ConflictError } from '@/models/errors/ConflictError';
+import { wait } from '@/utils/helpers/wait';
 
 type RequestBody = SignupRequest;
 const zRequestType = zSignupRequest;
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
   const method = 'POST /api/open/auth/register';
   const metadata: LogMetadata = {};
   try {
+    await wait(1);
     Logger.triggered(method, metadata);
 
     const body: RequestBody = await req.json();
