@@ -1,4 +1,4 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 
 interface AuthFormContainerProps {
   children: React.ReactNode;
@@ -7,7 +7,16 @@ interface AuthFormContainerProps {
 
 const AuthFormContainer: React.FC<AuthFormContainerProps> = (props) => {
   const { children, customClasses } = props;
-  return <div className={classNames('mt-10 sm:mx-auto sm:w-full sm:max-w-sm', customClasses)}>{children}</div>;
+  return (
+    <div
+      className={classNames(
+        'mt-10 sm:mx-auto sm:w-full sm:max-w-sm',
+        customClasses
+      )}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default AuthFormContainer;

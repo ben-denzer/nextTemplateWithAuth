@@ -7,13 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useContext, useState } from 'react';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
-import fetchWrapper from '@/utils/fetchWrapper';
+import fetchWrapper from '@/utils/frontend/fetchWrapper';
 import {
   SuccessResponse,
   zSuccessResponse,
 } from '@/models/responsePayloads/SuccessResponse';
 import { ToastContext } from '@/contexts/toastContext';
-import getErrorMessage from '@/utils/getErrorMessage';
+import getErrorMessage from '@/utils/helpers/getErrorMessage';
 import {
   SignupRequest,
   zSignupRequest,

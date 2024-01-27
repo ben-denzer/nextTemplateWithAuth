@@ -1,7 +1,8 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 import { UseFormRegister } from 'react-hook-form';
 
-export interface RhfTextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface RhfTextInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   register: UseFormRegister<any>;
   id: string;
   type: 'text' | 'email' | 'password' | 'tel';

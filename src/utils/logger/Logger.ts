@@ -50,7 +50,7 @@ export class Logger {
       Logger.genericLog({
         method,
         message,
-        severity: 1,
+        severity: 0,
         metadata: metadataWithError,
       });
       return;
@@ -80,7 +80,7 @@ export class Logger {
       Logger.genericLog({
         method,
         message,
-        severity: 1,
+        severity: 0,
         metadata: metadataWithError,
       });
       return;

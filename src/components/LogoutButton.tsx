@@ -2,8 +2,8 @@
 import { ToastContext } from '@/contexts/toastContext';
 import { zSuccessResponse } from '@/models/responsePayloads/SuccessResponse';
 import { ApiRoutes, PageRoutes } from '@/models/routes';
-import fetchWrapper from '@/utils/fetchWrapper';
-import getErrorMessage from '@/utils/getErrorMessage';
+import fetchWrapper from '@/utils/frontend/fetchWrapper';
+import getErrorMessage from '@/utils/helpers/getErrorMessage';
 import { useRouter } from 'next/navigation';
 import React, { useContext } from 'react';
 

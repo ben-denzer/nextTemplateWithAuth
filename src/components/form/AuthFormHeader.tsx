@@ -1,4 +1,4 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 import SmallLogo from '../SmallLogo';
 
 interface AuthFormHeaderProps {
@@ -11,7 +11,12 @@ const AuthFormHeader: React.FC<AuthFormHeaderProps> = (props) => {
   const { pageTitle, wrapperCustomClass, textCustomClass } = props;
 
   return (
-    <div className={classNames('sm:mx-auto sm:w-full sm:max-w-sm', wrapperCustomClass)}>
+    <div
+      className={classNames(
+        'sm:mx-auto sm:w-full sm:max-w-sm',
+        wrapperCustomClass
+      )}
+    >
       <SmallLogo />
       <h2
         className={classNames(

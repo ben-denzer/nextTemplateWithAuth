@@ -15,6 +15,7 @@ import bcrypt from 'bcrypt';
 import { AuthError } from '@/models/errors/AuthError';
 import {
   authCookieOptions,
+  cleanupAuthTokens,
   generateAuthToken,
 } from '@/utils/backend/authToken';
 import { cookies } from 'next/headers';
@@ -56,6 +57,13 @@ export async function POST(req: Request) {
 
     if (!passwordMatches) {
       throw new AuthError('Password does not match');
+    }
+
+    try {
+      await cleanupAuthTokens(userAuthRecord.id);
+    } catch (error) {
+      // user does not need to worry about this, but we should log it
+      Logger.error(method, 'cleanupAuthTokens failed', { error });
     }
 
     const authToken = await generateAuthToken({

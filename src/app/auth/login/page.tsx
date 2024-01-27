@@ -12,13 +12,13 @@ import { useContext, useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
-import fetchWrapper from '@/utils/fetchWrapper';
+import fetchWrapper from '@/utils/frontend/fetchWrapper';
 import {
   SuccessResponse,
   zSuccessResponse,
 } from '@/models/responsePayloads/SuccessResponse';
 import { ToastContext } from '@/contexts/toastContext';
-import getErrorMessage from '@/utils/getErrorMessage';
+import getErrorMessage from '@/utils/helpers/getErrorMessage';
 import { useRouter } from 'next/navigation';
 import LinkWrapper from '@/components/link/LinkWrapper';
 

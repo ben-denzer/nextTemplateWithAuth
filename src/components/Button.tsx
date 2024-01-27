@@ -1,4 +1,4 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 import LoadingSpinner from './LoadingSpinner';
 import React from 'react';
 

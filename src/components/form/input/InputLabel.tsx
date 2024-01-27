@@ -1,4 +1,4 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 
 interface InputLabelProps {
   label: React.ReactNode;
@@ -10,7 +10,13 @@ interface InputLabelProps {
 const InputLabel: React.FC<InputLabelProps> = (props) => {
   const { label, id, required, customClasses } = props;
   return (
-    <label htmlFor={id} className={classNames('block text-sm font-medium leading-6 text-normaltext', customClasses)}>
+    <label
+      htmlFor={id}
+      className={classNames(
+        'block text-sm font-medium leading-6 text-normaltext',
+        customClasses
+      )}
+    >
       {label} {required && <span className="text-dangertext">*</span>}
     </label>
   );

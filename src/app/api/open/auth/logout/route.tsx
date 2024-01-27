@@ -31,14 +31,17 @@ export async function POST(req: Request) {
           token,
         },
       });
-    } catch (error) {
-      // cookie has been deleted - no need to show this DB error to the user, but we should log it
-      Logger.error(
-        method,
-        'failed to delete auth token from database',
-        error,
-        metadata
-      );
+    } catch (error: any) {
+      // P2025 is the error code for "Record to delete does not exist."
+      if (error.code === 'P2025') {
+        // the cookie has been deleted - no need to show this DB error to the user, but we should log it
+        Logger.error(
+          method,
+          'failed to delete auth token from database',
+          error,
+          metadata
+        );
+      }
     }
 
     Logger.success(method, metadata);

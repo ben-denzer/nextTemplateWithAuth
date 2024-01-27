@@ -1,4 +1,4 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 import InputLabel from './InputLabel';
 import RhfTextInput, { RhfTextInputProps } from './RhfTextInput';
 
@@ -29,7 +29,12 @@ const RhfTextInputWithLabel: React.FC<RhfTextInputWithLabelProps> = (props) => {
   return (
     <div className={wrapperClasses}>
       {typeof label === 'string' && (
-        <InputLabel label={label} id={id} required={required} customClasses={labelClasses} />
+        <InputLabel
+          label={label}
+          id={id}
+          required={required}
+          customClasses={labelClasses}
+        />
       )}
       {typeof label !== 'string' && label}
       <div className={classNames('mt-2', inputWrapperClasses)}>

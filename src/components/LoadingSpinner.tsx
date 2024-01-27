@@ -1,4 +1,4 @@
-import classNames from '@/utils/classNames';
+import classNames from '@/utils/frontend/classNames';
 
 type SpinnerSize = 10 | 15 | 20 | 30 | 40 | 50;
 type ColorType = 'light' | 'dark';
@@ -41,7 +41,12 @@ const LoadingSpinner: React.FC<SpinnerProps> = (props) => {
     <div role="status">
       <svg
         aria-hidden="true"
-        className={classNames('animate-spin', sizeClass, bgColorClass, customClasses)}
+        className={classNames(
+          'animate-spin',
+          sizeClass,
+          bgColorClass,
+          customClasses
+        )}
         viewBox="0 0 100 101"
         fill={foregroundColor}
         xmlns="http://www.w3.org/2000/svg"

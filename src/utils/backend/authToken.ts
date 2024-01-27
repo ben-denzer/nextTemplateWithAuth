@@ -5,7 +5,8 @@ import { LogMetadata, Logger } from '../logger/Logger';
 import { AuthError } from '@/models/errors/AuthError';
 import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
 
-const AUTH_TOKEN_EXPIRATION = '5m';
+const AUTH_TOKEN_EXPIRATION_DAYS = 30;
+const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}d`;
 const secret = new TextEncoder().encode(process.env.JWT_SECRET as string);
 const algorithm = 'HS256';
 
@@ -43,7 +44,7 @@ const verifyJwt = async (token: string): Promise<AuthTokenData> => {
     });
     return payload.data as AuthTokenData;
   } catch (err) {
-    Logger.error(method, 'caught', err);
+    Logger.debug(method, 'caught - invalid token');
     throw new AuthError('invalid token');
   }
 };
@@ -57,13 +58,16 @@ export const authCookieOptions = (
   sameSite: 'strict';
   secure: boolean;
   path: string;
+  maxAge: number;
 } => {
   return {
     name: AUTH_TOKEN_COOKIE_NAME,
     value: authToken,
     httpOnly: true,
+    maxAge: 60 * 60 * 24 * AUTH_TOKEN_EXPIRATION_DAYS,
     sameSite: 'strict',
     secure: process.env.NODE_ENV === 'production',
+
     path: '/',
   };
 };
@@ -125,3 +129,63 @@ export const verifyAuthToken = async (
     throw err;
   }
 };
+
+export async function cleanupAuthTokens(userId: number) {
+  const method = 'authToken.cleanupAuthTokens';
+  const metadata: LogMetadata = { userId };
+
+  Logger.triggered(method, metadata);
+  try {
+    const allTokens = await prisma.authToken.findMany({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      select: {
+        id: true,
+        token: true,
+        tokenType: true,
+      },
+    });
+
+    Logger.info(
+      'cleanupAuthTokens',
+      `found ${allTokens?.length} tokens`,
+      metadata
+    );
+
+    let tokensToDelete = [];
+
+    for (let t of allTokens) {
+      try {
+        if (t.tokenType !== 'login') {
+          tokensToDelete.push(t.id);
+          continue;
+        }
+        await verifyJwt(t.token);
+        // if valid, do nothing
+      } catch (err) {
+        // if invalid, delete
+        tokensToDelete.push(t.id);
+      }
+    }
+
+    if (tokensToDelete.length === 0) {
+      Logger.info(method, 'no tokens to delete', metadata);
+      return;
+    }
+
+    await prisma.authToken.deleteMany({
+      where: {
+        id: {
+          in: tokensToDelete,
+        },
+      },
+    });
+    Logger.success(method, metadata);
+  } catch (err) {
+    Logger.error(method, 'caught', err);
+    throw err;
+  }
+}
