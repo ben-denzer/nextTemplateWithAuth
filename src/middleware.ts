@@ -6,7 +6,7 @@ import { AUTH_TOKEN_COOKIE_NAME } from './models/constants';
 
 const BASE_URL = process.env.BASE_URL;
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, response: NextResponse) {
   const requestPath = request.nextUrl.pathname;
   const requestMethod = request.method;
 
@@ -31,7 +31,6 @@ export async function middleware(request: NextRequest) {
       if (checkAuthRes.ok) {
         isLoggedIn = true;
       }
-      console.log(await checkAuthRes.text());
     } catch (err) {
       // ignore for now - we only care if they are accessing a protected route
     }
@@ -47,16 +46,24 @@ export async function middleware(request: NextRequest) {
   // protect backend routes that are not inside /api/open
   if (requestPath.startsWith('/api') && !requestPath.startsWith('/api/open')) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(`${BASE_URL}${PageRoutes.LOGIN}`);
+      const res = NextResponse.redirect(`${BASE_URL}${PageRoutes.LOGIN}`);
+      res.cookies.delete(AUTH_TOKEN_COOKIE_NAME);
+      return res;
     }
   }
 
   // protect frontend routes that are inside /application
   if (requestPath.startsWith('/application')) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(`${BASE_URL}${PageRoutes.LOGIN}`);
+      const res = NextResponse.redirect(`${BASE_URL}${PageRoutes.LOGIN}`);
+      res.cookies.delete(AUTH_TOKEN_COOKIE_NAME);
+      return res;
     }
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  if (!isLoggedIn) {
+    res.cookies.delete(AUTH_TOKEN_COOKIE_NAME);
+  }
+  return res;
 }

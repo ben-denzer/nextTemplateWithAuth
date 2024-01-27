@@ -5,8 +5,8 @@ import { LogMetadata, Logger } from '../logger/Logger';
 import { AuthError } from '@/models/errors/AuthError';
 import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
 
-const AUTH_TOKEN_EXPIRATION_DAYS = 30;
-const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}d`;
+const AUTH_TOKEN_EXPIRATION_DAYS = 1;
+const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}m`;
 const secret = new TextEncoder().encode(process.env.JWT_SECRET as string);
 const algorithm = 'HS256';
 

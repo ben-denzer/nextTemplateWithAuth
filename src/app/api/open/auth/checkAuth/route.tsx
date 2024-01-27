@@ -41,7 +41,7 @@ export async function GET(req: Request) {
 
     return resSuccess(zSuccessResponse, SUCCESS_RESPONSE, 200);
   } catch (err) {
-    cookies().delete(AUTH_TOKEN_COOKIE_NAME);
+    cookies().set(AUTH_TOKEN_COOKIE_NAME, '');
     return resError(req, err);
   }
 }
