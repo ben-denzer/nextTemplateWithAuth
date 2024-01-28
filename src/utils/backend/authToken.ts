@@ -109,36 +109,32 @@ export const verifyAuthToken = async (
   token: string | undefined | null,
   tokenType: TokenType
 ): Promise<AuthTokenData> => {
-  try {
-    if (!token) {
-      throw new AuthError('no token provided');
-    }
-
-    const verifiedFromClient = await verifyJwt(token);
-    if (!verifiedFromClient.userId) {
-      throw new AuthError('invalid token');
-    }
-
-    if (verifiedFromClient.tokenType !== tokenType) {
-      throw new AuthError('invalid token type');
-    }
-
-    const dbToken = await prisma.authToken.findFirst({
-      where: {
-        token,
-        tokenType: verifiedFromClient.tokenType,
-        userId: verifiedFromClient.userId,
-      },
-      select: { id: true },
-    });
-    if (!dbToken?.id) {
-      throw new AuthError('no token in DB');
-    }
-
-    return verifiedFromClient;
-  } catch (err) {
-    throw err;
+  if (!token) {
+    throw new AuthError('no token provided');
   }
+
+  const verifiedFromClient = await verifyJwt(token);
+  if (!verifiedFromClient.userId) {
+    throw new AuthError('invalid token');
+  }
+
+  if (verifiedFromClient.tokenType !== tokenType) {
+    throw new AuthError('invalid token type');
+  }
+
+  const dbToken = await prisma.authToken.findFirst({
+    where: {
+      token,
+      tokenType: verifiedFromClient.tokenType,
+      userId: verifiedFromClient.userId,
+    },
+    select: { id: true },
+  });
+  if (!dbToken?.id) {
+    throw new AuthError('no token in DB');
+  }
+
+  return verifiedFromClient;
 };
 
 export async function cleanupAuthTokens(userId: number) {
@@ -165,9 +161,9 @@ export async function cleanupAuthTokens(userId: number) {
       metadata
     );
 
-    let tokensToDelete = [];
+    const tokensToDelete = [];
 
-    for (let t of allTokens) {
+    for (const t of allTokens) {
       try {
         if (t.tokenType !== 'login') {
           tokensToDelete.push(t.id);
