@@ -4,7 +4,7 @@ import AuthFormHeader from '@/components/form/AuthFormHeader';
 import { ApiRoutes, PageRoutes } from '@/models/routes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
 import fetchWrapper from '@/utils/frontend/fetchWrapper';
@@ -43,11 +43,12 @@ const ResetPassword: React.FC = () => {
   });
 
   useEffect(() => {
+    console.log('effecting...');
     const email = getQueryParam('email');
     if (email) {
       setValue('email', email);
     }
-  }, []);
+  }, [setValue]);
 
   const fieldNames: Record<keyof FormType, keyof FormType> = {
     email: 'email',
@@ -86,13 +87,13 @@ const ResetPassword: React.FC = () => {
     }
   };
 
-  const displayFormError = () => {
+  const displayFormError = useCallback(() => {
     showFormError<FormType>(formErrors, setError);
-  };
+  }, [formErrors, setError]);
 
   useEffect(() => {
     displayFormError();
-  }, [formErrors]);
+  }, [formErrors, displayFormError]);
 
   return (
     <>

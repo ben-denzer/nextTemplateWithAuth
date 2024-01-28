@@ -8,7 +8,7 @@ import {
   LoginRequest,
   zLoginRequest,
 } from '@/models/requestPayloads/auth/LoginRequest';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import InputLabel from '@/components/form/input/InputLabel';
 import RhfTextInputWithLabel from '@/components/form/input/RhfTextInputWithLabel';
 import Button from '@/components/Button';
@@ -79,13 +79,13 @@ const Login: React.FC = () => {
     }
   };
 
-  const displayFormError = () => {
+  const displayFormError = useCallback(() => {
     showFormError<FormType>(formErrors, setError);
-  };
+  }, [formErrors, setError]);
 
   useEffect(() => {
     displayFormError();
-  }, [formErrors]);
+  }, [formErrors, displayFormError]);
 
   return (
     <>
