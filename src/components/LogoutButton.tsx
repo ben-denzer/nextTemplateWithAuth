@@ -5,11 +5,13 @@ import { ApiRoutes, PageRoutes } from '@/models/routes';
 import fetchWrapper from '@/utils/frontend/fetchWrapper';
 import getErrorMessage from '@/utils/helpers/getErrorMessage';
 import { useRouter } from 'next/navigation';
-import React, { useContext } from 'react';
+import { useContext, useState } from 'react';
+import { DangerModal } from './Modal/DangerModal';
 
 export const LogoutButton: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [showModal, setShowModal] = useState(false);
   const { setError } = useContext(ToastContext);
   const router = useRouter();
 
@@ -24,5 +26,15 @@ export const LogoutButton: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  return <div onClick={logout}>{children}</div>;
+  return (
+    <>
+      <div onClick={() => setShowModal(true)}>{children}</div>
+      <DangerModal
+        shouldShowModal={showModal}
+        modalTitle="Are you sure?"
+        closeModal={() => setShowModal(false)}
+        primaryButtonCallback={logout}
+      />
+    </>
+  );
 };

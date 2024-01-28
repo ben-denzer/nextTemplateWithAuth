@@ -1,25 +1,16 @@
 import React, { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 interface Props {
   cancelButtonRef: React.RefObject<HTMLButtonElement>;
   shouldShowModal: boolean;
-  HeadlessUiDialog: any;
-  HeadlessUiTransition: any;
-  XIcon: React.FC<React.ComponentProps<'svg'>>;
   closeModal: () => void;
   children: React.ReactNode;
 }
 
 export const _Modal: React.FC<Props> = (props) => {
-  const {
-    shouldShowModal,
-    closeModal,
-    cancelButtonRef,
-    children,
-    HeadlessUiDialog: Dialog,
-    HeadlessUiTransition: Transition,
-    XIcon,
-  } = props;
+  const { shouldShowModal, closeModal, cancelButtonRef, children } = props;
   return (
     <Transition.Root show={shouldShowModal} as={Fragment}>
       <Dialog
@@ -65,7 +56,7 @@ export const _Modal: React.FC<Props> = (props) => {
                   onClick={closeModal}
                 >
                   <span className="sr-only">Close</span>
-                  <XIcon className="h-6 w-6" aria-hidden="true" />
+                  <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
               </div>
               {children}

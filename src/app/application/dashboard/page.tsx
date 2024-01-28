@@ -13,6 +13,8 @@ import {
 } from '@heroicons/react/24/outline';
 import classNames from '@/utils/frontend/classNames';
 import SmallLogo from '@/components/SmallLogo';
+import { LogoutButton } from '@/components/LogoutButton';
+import { FakeLink } from '@/components/link/FakeLink';
 
 const navigation = [
   { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
@@ -252,7 +254,12 @@ export default function Dashboard() {
         </div>
 
         <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">{/* Your content */}</div>
+          <div className="px-4 sm:px-6 lg:px-8">
+            <LogoutButton>
+              <FakeLink>Logout</FakeLink>
+            </LogoutButton>
+            {/* Your content */}
+          </div>
         </main>
       </div>
     </>

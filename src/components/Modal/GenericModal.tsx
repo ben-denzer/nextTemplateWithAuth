@@ -2,6 +2,7 @@ import React from 'react';
 import { _Modal } from './_Modal';
 import Button from '../Button';
 import classNames from '@/utils/frontend/classNames';
+import { Dialog } from '@headlessui/react';
 
 interface ModalProps {
   cancelButtonText?: string;
@@ -13,9 +14,6 @@ interface ModalProps {
   singleButton?: boolean;
   primaryButtonDisabled?: boolean;
   primaryButtonClassnames?: string;
-  HeadlessUiDialog: any;
-  HeadlessUiTransition: any;
-  XIcon: React.FC<React.ComponentProps<'svg'>>;
   disabledCallback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   closeModal: () => void;
   primaryButtonCallback: () => void;
@@ -40,18 +38,12 @@ const GenericModal: React.FC<ModalProps> = (props) => {
     primaryButtonDisabled,
     primaryButtonClassnames,
     disabledCallback,
-    HeadlessUiDialog: Dialog,
-    HeadlessUiTransition: Transition,
-    XIcon,
   } = props;
 
   return (
     <_Modal
       cancelButtonRef={cancelButtonRef}
       shouldShowModal={shouldShowModal}
-      HeadlessUiDialog={Dialog}
-      HeadlessUiTransition={Transition}
-      XIcon={XIcon}
       closeModal={closeModal}
     >
       <div className="sm:flex sm:items-start">
