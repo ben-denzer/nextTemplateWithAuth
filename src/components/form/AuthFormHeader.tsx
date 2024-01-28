@@ -17,7 +17,7 @@ const AuthFormHeader: React.FC<AuthFormHeaderProps> = (props) => {
         wrapperCustomClass
       )}
     >
-      <SmallLogo />
+      <SmallLogo customClasses="mx-auto h-10 w-auto" />
       <h2
         className={classNames(
           'mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900',
