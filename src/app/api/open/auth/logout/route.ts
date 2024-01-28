@@ -5,9 +5,10 @@ import {
 } from '@/models/responsePayloads/SuccessResponse';
 import resError from '@/utils/backend/resError';
 import resSuccess from '@/utils/backend/resSuccess';
-import { LogMetadata, Logger } from '@/utils/logger/Logger';
+import { Logger } from '@/utils/logger/Logger';
 import { cookies } from 'next/headers';
 import { prisma } from '@/utils/backend/prisma';
+import { LogMetadata } from '@/models/LogInfo';
 
 export async function POST(req: Request) {
   const method = 'POST /api/open/auth/logout';

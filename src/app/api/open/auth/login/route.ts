@@ -9,7 +9,7 @@ import {
 import resError from '@/utils/backend/resError';
 import resSuccess from '@/utils/backend/resSuccess';
 import validateReqBody from '@/utils/backend/validateReqBody';
-import { LogMetadata, Logger } from '@/utils/logger/Logger';
+import { Logger } from '@/utils/logger/Logger';
 import { prisma } from '@/utils/backend/prisma';
 import bcrypt from 'bcrypt';
 import { AuthError } from '@/models/errors/AuthError';
@@ -20,6 +20,7 @@ import {
 } from '@/utils/backend/authToken';
 import { cookies } from 'next/headers';
 import { wait } from '@/utils/helpers/wait';
+import { LogMetadata } from '@/models/LogInfo';
 
 type RequestBody = LoginRequest;
 const zRequestType = zLoginRequest;

@@ -7,7 +7,7 @@ import resSuccess from '@/utils/backend/resSuccess';
 import validateReqBody from '@/utils/backend/validateReqBody';
 import { prisma } from '@/utils/backend/prisma';
 import { generateAuthToken } from '@/utils/backend/authToken';
-import { LogMetadata, Logger } from '@/utils/logger/Logger';
+import { Logger } from '@/utils/logger/Logger';
 import { ConflictError } from '@/models/errors/ConflictError';
 import { EmailOnly, zEmailOnly } from '@/models/requestPayloads/auth/EmailOnly';
 import { wait } from '@/utils/helpers/wait';
@@ -15,6 +15,7 @@ import * as FormData from 'form-data';
 import Mailgun from 'mailgun.js';
 import { BASE_URL } from '@/models/constants';
 import { PageRoutes } from '@/models/routes';
+import { LogMetadata } from '@/models/LogInfo';
 
 const mailgun = new Mailgun(FormData as any);
 const DOMAIN = process.env.MAILGUN_DOMAIN as string;

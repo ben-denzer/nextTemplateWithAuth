@@ -1,9 +1,5 @@
 import { SALT_ROUNDS } from '@/models/constants';
 import {
-  SignupRequest,
-  zSignupRequest,
-} from '@/models/requestPayloads/auth/SignupRequest';
-import {
   SUCCESS_RESPONSE,
   zSuccessResponse,
 } from '@/models/responsePayloads/SuccessResponse';
@@ -14,19 +10,26 @@ import bcrypt from 'bcrypt';
 import { prisma } from '@/utils/backend/prisma';
 import {
   authCookieOptions,
+  cleanupAuthTokens,
   generateAuthToken,
 } from '@/utils/backend/authToken';
 import { cookies } from 'next/headers';
-import { LogMetadata, Logger } from '@/utils/logger/Logger';
-import { ConflictError } from '@/models/errors/ConflictError';
+import { Logger } from '@/utils/logger/Logger';
 import { wait } from '@/utils/helpers/wait';
+import {
+  ResetPasswordPayload,
+  zResetPasswordPayload,
+} from '@/models/requestPayloads/auth/ResetPassword';
+import { AuthError } from '@/models/errors/AuthError';
+import { InvalidRequestPayloadError } from '@/models/errors/InvalidRequestPayloadError';
+import { LogMetadata } from '@/models/LogInfo';
 
-type RequestBody = SignupRequest;
-const zRequestType = zSignupRequest;
+type RequestBody = ResetPasswordPayload;
+const zRequestType = zResetPasswordPayload;
 const zResponseType = zSuccessResponse;
 
 export async function POST(req: Request) {
-  const method = 'POST /api/open/auth/register';
+  const method = 'POST /api/open/auth/resetPassword';
   const metadata: LogMetadata = {};
   try {
     await wait(1);
@@ -34,21 +37,43 @@ export async function POST(req: Request) {
 
     const body: RequestBody = await req.json();
     metadata.body = { ...body, password: '***', password2: '***' };
-    Logger.info(method, 'signup request', metadata);
+    Logger.info(method, 'pw reset request', metadata);
 
     validateReqBody(zRequestType, body);
+
+    if (body.password !== body.password2) {
+      throw new InvalidRequestPayloadError('Passwords do not match');
+    }
+
+    const tokenRes = await prisma.authToken.findFirst({
+      where: {
+        token: body.token,
+        tokenType: 'forgotPassword',
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!tokenRes) {
+      throw new AuthError('Invalid token');
+    }
 
     const hashed = await bcrypt.hash(body.password, SALT_ROUNDS);
 
     Logger.debug(method, 'password hashed', metadata);
 
-    const userAuthRecord = await prisma.userAuth.create({
+    const userAuthRecord = await prisma.userAuth.update({
       data: {
-        username: body.email,
         password: hashed,
       },
+      where: {
+        id: tokenRes.userId,
+      },
     });
-    Logger.debug(method, 'userAuth record created', metadata);
+    Logger.debug(method, 'userAuth record updated, clearing tokens', metadata);
+
+    await cleanupAuthTokens(tokenRes.userId);
 
     const authToken = await generateAuthToken({
       userId: userAuthRecord.id,
@@ -60,10 +85,7 @@ export async function POST(req: Request) {
     Logger.success(method, metadata);
     return resSuccess(zResponseType, SUCCESS_RESPONSE);
   } catch (error: any) {
-    Logger.error(method, 'signup failed', error, metadata);
-    if (error.code === 'P2002') {
-      return resError(req, new ConflictError('Email already in use'));
-    }
+    Logger.error(method, 'password update failed', error, metadata);
     return resError(req, error);
   }
 }
