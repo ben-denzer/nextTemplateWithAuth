@@ -6,6 +6,7 @@ import {
   zSuccessResponse,
 } from '@/models/responsePayloads/SuccessResponse';
 import { _LoggerBase } from './_LoggerBase';
+import { LOG_LEVEL } from '@/models/constants';
 
 export class ClientLogger extends _LoggerBase {
   constructor() {
@@ -13,6 +14,11 @@ export class ClientLogger extends _LoggerBase {
   }
 
   public static async _genericLog(logData: LogInfo) {
+    const logLevel = LOG_LEVEL;
+    if (logData.severity < logLevel) {
+      return;
+    }
+
     try {
       const res = await fetchWrapper<SuccessResponse>(
         'POST',

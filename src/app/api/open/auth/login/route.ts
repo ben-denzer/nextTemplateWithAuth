@@ -75,6 +75,7 @@ export async function POST(req: Request) {
     });
     cookies().set(authCookieOptions(authToken));
 
+    Logger.success(method, metadata);
     return resSuccess(zResponseType, SUCCESS_RESPONSE);
   } catch (error) {
     return resError(req, error);

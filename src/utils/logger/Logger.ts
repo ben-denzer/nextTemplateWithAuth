@@ -1,5 +1,9 @@
 import { LogInfo } from '@/models/LogInfo';
-import { NEXT_APP_LOG_NAME, NEWRELIC_LOG_KEY } from '@/models/constants';
+import {
+  NEXT_APP_LOG_NAME,
+  NEWRELIC_LOG_KEY,
+  LOG_LEVEL,
+} from '@/models/constants';
 import { _LoggerBase } from './_LoggerBase';
 
 export class Logger extends _LoggerBase {
@@ -8,6 +12,11 @@ export class Logger extends _LoggerBase {
   }
 
   public static async _genericLog(logData: LogInfo) {
+    const logLevel = LOG_LEVEL;
+    if (logData.severity < logLevel) {
+      return;
+    }
+
     try {
       const service = logData.fromClient
         ? `${NEXT_APP_LOG_NAME}-client`

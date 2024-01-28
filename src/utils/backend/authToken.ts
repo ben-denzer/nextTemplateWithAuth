@@ -1,10 +1,11 @@
 'use server';
 import * as jose from 'jose';
 import { prisma } from './prisma';
-import { LogMetadata, Logger } from '../logger/Logger';
+import { Logger } from '../logger/Logger';
 import { AuthError } from '@/models/errors/AuthError';
 import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
 import { TokenType } from '@prisma/client';
+import { LogMetadata } from '@/models/LogInfo';
 
 const AUTH_TOKEN_EXPIRATION_DAYS = 1;
 const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}d`;
@@ -86,8 +87,6 @@ export const generateAuthToken = async (
   const method = 'authToken.generateAuthToken';
   const metadata: LogMetadata = data;
   try {
-    Logger.triggered(method, metadata);
-
     const token = await signJwt(data);
     Logger.debug(method, 'token signed', metadata);
 
@@ -99,7 +98,6 @@ export const generateAuthToken = async (
       },
     });
 
-    Logger.success(method, metadata);
     return token;
   } catch (err) {
     Logger.error(method, 'caught', err);
@@ -147,7 +145,6 @@ export async function cleanupAuthTokens(userId: number) {
   const method = 'authToken.cleanupAuthTokens';
   const metadata: LogMetadata = { userId };
 
-  Logger.triggered(method, metadata);
   try {
     const allTokens = await prisma.authToken.findMany({
       where: {
@@ -162,7 +159,7 @@ export async function cleanupAuthTokens(userId: number) {
       },
     });
 
-    Logger.info(
+    Logger.debug(
       'cleanupAuthTokens',
       `found ${allTokens?.length} tokens`,
       metadata
@@ -185,7 +182,7 @@ export async function cleanupAuthTokens(userId: number) {
     }
 
     if (tokensToDelete.length === 0) {
-      Logger.info(method, 'no tokens to delete', metadata);
+      Logger.debug(method, 'no tokens to delete', metadata);
       return;
     }
 
@@ -196,7 +193,6 @@ export async function cleanupAuthTokens(userId: number) {
         },
       },
     });
-    Logger.success(method, metadata);
   } catch (err) {
     Logger.error(method, 'caught', err);
     throw err;
