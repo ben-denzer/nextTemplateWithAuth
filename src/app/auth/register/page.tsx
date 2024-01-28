@@ -21,6 +21,8 @@ import {
 import { useRouter } from 'next/navigation';
 import LinkWrapper from '@/components/link/LinkWrapper';
 import { showFormError } from '@/utils/frontend/showFormError';
+import { LogMetadata } from '@/models/LogInfo';
+import { ClientLogger } from '@/utils/logger/ClientLogger';
 
 const Signup: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -46,6 +48,8 @@ const Signup: React.FC = () => {
   };
 
   const onSubmit = async (data: FormType) => {
+    const method = 'app/auth/register - onSubmit';
+    const metadata: LogMetadata = { email: data.email };
     setLoading(true);
     try {
       const signupRes = await fetchWrapper<SuccessResponse>(
@@ -65,6 +69,7 @@ const Signup: React.FC = () => {
             type: 'manual',
             message: 'Email already in use',
           });
+          ClientLogger.info(method, 'email already in use', metadata);
           return;
         }
         throw new Error(signupRes.displayMessage);
@@ -73,6 +78,7 @@ const Signup: React.FC = () => {
       setSuccess('Success!');
       router.push(PageRoutes.DASHBOARD);
     } catch (error) {
+      ClientLogger.error(method, 'signup failed', error, metadata);
       setError(getErrorMessage(error));
     } finally {
       setLoading(false);

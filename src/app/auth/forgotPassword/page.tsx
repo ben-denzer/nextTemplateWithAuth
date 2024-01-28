@@ -18,8 +18,10 @@ import { useRouter } from 'next/navigation';
 import { EmailOnly, zEmailOnly } from '@/models/requestPayloads/auth/EmailOnly';
 import { wait } from '@/utils/helpers/wait';
 import { showFormError } from '@/utils/frontend/showFormError';
+import { LogMetadata } from '@/models/LogInfo';
+import { ClientLogger } from '@/utils/logger/ClientLogger';
 
-const Login: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { setError, setSuccess } = useContext(ToastContext);
   const router = useRouter();
@@ -40,6 +42,8 @@ const Login: React.FC = () => {
   };
 
   const onSubmit = async (data: FormType) => {
+    const method = 'app/auth/forgotPassword - onSubmit';
+    const metadata: LogMetadata = { email: data.email };
     setLoading(true);
     try {
       const res = await fetchWrapper<SuccessResponse>(
@@ -60,6 +64,7 @@ const Login: React.FC = () => {
       await wait(3);
       router.push(PageRoutes.LOGIN);
     } catch (error) {
+      ClientLogger.error(method, 'form submit failed', error, metadata);
       setError(getErrorMessage(error));
     } finally {
       setLoading(false);
@@ -110,4 +115,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

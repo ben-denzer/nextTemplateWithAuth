@@ -22,6 +22,8 @@ import {
 } from '@/models/requestPayloads/auth/ResetPassword';
 import { getQueryParam } from '@/utils/frontend/getQueryParam';
 import { showFormError } from '@/utils/frontend/showFormError';
+import { LogMetadata } from '@/models/LogInfo';
+import { ClientLogger } from '@/utils/logger/ClientLogger';
 
 const ResetPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -54,6 +56,8 @@ const ResetPassword: React.FC = () => {
   };
 
   const onSubmit = async (formData: FormType) => {
+    const method = 'app/auth/resetPassword - onSubmit';
+    const metadata: LogMetadata = { email: formData.email };
     setLoading(true);
     const token = getQueryParam('token');
     const payload = { ...formData, token };
@@ -75,6 +79,7 @@ const ResetPassword: React.FC = () => {
       setSuccess('Success!');
       router.push(PageRoutes.DASHBOARD);
     } catch (error) {
+      ClientLogger.error(method, 'form submit failed', error, metadata);
       setError(getErrorMessage(error));
     } finally {
       setLoading(false);

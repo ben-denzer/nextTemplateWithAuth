@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation';
 import LinkWrapper from '@/components/link/LinkWrapper';
 import { showFormError } from '@/utils/frontend/showFormError';
 import { ClientLogger } from '@/utils/logger/ClientLogger';
+import { LogMetadata } from '@/models/LogInfo';
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -31,12 +32,6 @@ const Login: React.FC = () => {
 
   type FormType = LoginRequest;
   const formSchema = zLoginRequest;
-
-  useEffect(() => {
-    ClientLogger.info('/UPDATED/app/auth/login/page.tsx', 'useEffect', {
-      status: 'mounted',
-    });
-  }, []);
 
   const {
     register,
@@ -52,6 +47,8 @@ const Login: React.FC = () => {
   };
 
   const onSubmit = async (data: FormType) => {
+    const method = 'app/auth/login - onSubmit';
+    const metadata: LogMetadata = { email: data.email };
     setLoading(true);
     try {
       const loginRes = await fetchWrapper<SuccessResponse>(
@@ -76,6 +73,7 @@ const Login: React.FC = () => {
       router.push(PageRoutes.DASHBOARD);
     } catch (error) {
       setError(getErrorMessage(error));
+      ClientLogger.error(method, 'login failed', error, metadata);
     } finally {
       setLoading(false);
     }
