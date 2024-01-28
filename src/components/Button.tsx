@@ -8,7 +8,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   loading?: boolean;
   type?: 'button' | 'submit' | 'reset';
-  disabledCallback: () => void | Promise<void>;
+  disabledCallback?: (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => void | Promise<void>;
   onClick?: () => void | Promise<void>;
   children: React.ReactNode;
 }
@@ -44,7 +46,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   // so even when it is "disabled", we don't want to tell the DOM that... unless there is no disabledCallback provided
   const actuallyDisableButton = (disabled && !disabledCallback) || loading;
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (loading) {
       e.preventDefault();
       e.stopPropagation();
@@ -54,7 +56,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       e.preventDefault();
       e.stopPropagation();
       if (disabledCallback) {
-        disabledCallback();
+        disabledCallback(e);
       }
       return;
     }
