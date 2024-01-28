@@ -43,7 +43,6 @@ const ResetPassword: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log('effecting...');
     const email = getQueryParam('email');
     if (email) {
       setValue('email', email);
