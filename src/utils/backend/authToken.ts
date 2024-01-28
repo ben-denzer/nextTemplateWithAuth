@@ -3,7 +3,7 @@ import * as jose from 'jose';
 import { prisma } from './prisma';
 import { Logger } from '../logger/Logger';
 import { AuthError } from '@/models/errors/AuthError';
-import { AUTH_TOKEN_COOKIE_NAME } from '@/models/constants';
+import { AUTH_TOKEN_COOKIE_NAME, JWT_SECRET } from '@/models/constants';
 import { TokenType } from '@prisma/client';
 import { LogMetadata } from '@/models/LogInfo';
 
@@ -11,7 +11,7 @@ const AUTH_TOKEN_EXPIRATION_DAYS = 1;
 const AUTH_TOKEN_EXPIRATION = `${AUTH_TOKEN_EXPIRATION_DAYS}d`;
 const FORGOT_PW_TOKEN_EXPIRATION = '3d';
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET as string);
+const secret = new TextEncoder().encode(JWT_SECRET);
 const algorithm = 'HS256';
 
 export interface AuthTokenData {

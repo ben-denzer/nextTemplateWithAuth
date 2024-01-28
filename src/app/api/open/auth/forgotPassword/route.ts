@@ -11,18 +11,10 @@ import { Logger } from '@/utils/logger/Logger';
 import { ConflictError } from '@/models/errors/ConflictError';
 import { EmailOnly, zEmailOnly } from '@/models/requestPayloads/auth/EmailOnly';
 import { wait } from '@/utils/helpers/wait';
-import * as FormData from 'form-data';
-import Mailgun from 'mailgun.js';
 import { BASE_URL } from '@/models/constants';
 import { PageRoutes } from '@/models/routes';
 import { LogMetadata } from '@/models/LogInfo';
-
-const mailgun = new Mailgun(FormData as any);
-const DOMAIN = process.env.MAILGUN_DOMAIN as string;
-const mg = mailgun.client({
-  username: 'api',
-  key: process.env.MAILGUN_API_KEY as string,
-});
+import { sendEmail } from '@/utils/backend/email/sendEmail';
 
 type RequestBody = EmailOnly;
 const zRequestType = zEmailOnly;
@@ -65,8 +57,7 @@ export async function POST(req: Request) {
 
     Logger.debug(method, 'reset link generated', metadata);
 
-    await mg.messages.create(DOMAIN, {
-      from: 'no-reply@bdenzer.com',
+    await sendEmail({
       to: body.email,
       subject: 'Reset your password',
       html: `<p>Click this link to reset your password. It is valid for 72 hours: <a href="${resetLink}">${resetLink}</a></p>`,
