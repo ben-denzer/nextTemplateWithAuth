@@ -1,3 +1,4 @@
+import { LOG_APP_NAME, NEWRELIC_LOG_KEY } from '@/models/constants';
 import { AuthError } from '@/models/errors/AuthError';
 
 export type LogMetadata = Record<string, any>;
@@ -112,9 +113,43 @@ export class Logger {
     }
   }
 
-  private static genericLog(logData: LogInfo) {
-    // TODO: implement
-    console.log(logData);
-    return;
+  private static async genericLog(logData: LogInfo) {
+    try {
+      const newRelicBody = JSON.stringify({
+        service: LOG_APP_NAME,
+        severity: logData.severity,
+        method: logData.method,
+        logs: [
+          {
+            timestamp: Date.now(),
+            message: logData.message,
+            attributes: { customProperties: logData },
+          },
+        ],
+      });
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Api-Key': NEWRELIC_LOG_KEY as string,
+      };
+
+      const options: RequestInit = {
+        method: 'POST',
+        headers,
+        body: newRelicBody,
+      };
+
+      const res = await fetch('https://log-api.newrelic.com/log/v1', options);
+      if (!res.ok) {
+        try {
+          const msg = await res.text();
+          console.error('Error sending logs - 1', msg);
+        } catch (resTextError) {
+          console.error('Error sending logs - 2', resTextError);
+        }
+      }
+    } catch (error) {
+      console.error('Error sending logs - 3', error);
+    }
   }
 }
