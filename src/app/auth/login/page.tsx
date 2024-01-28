@@ -22,6 +22,7 @@ import getErrorMessage from '@/utils/helpers/getErrorMessage';
 import { useRouter } from 'next/navigation';
 import LinkWrapper from '@/components/link/LinkWrapper';
 import { showFormError } from '@/utils/frontend/showFormError';
+import { ClientLogger } from '@/utils/logger/ClientLogger';
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,12 @@ const Login: React.FC = () => {
 
   type FormType = LoginRequest;
   const formSchema = zLoginRequest;
+
+  useEffect(() => {
+    ClientLogger.info('/UPDATED/app/auth/login/page.tsx', 'useEffect', {
+      status: 'mounted',
+    });
+  }, []);
 
   const {
     register,

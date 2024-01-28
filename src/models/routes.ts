@@ -11,6 +11,7 @@ export enum ApiRoutes {
   CHECK_AUTH = '/api/open/auth/checkAuth',
   FORGOT_PASSWORD = '/api/open/auth/forgotPassword',
   LOGIN = '/api/open/auth/login',
+  LOGGER = '/api/open/logger',
   LOGOUT = '/api/open/auth/logout',
   PASSWORD_RESET = '/api/open/auth/resetPassword',
   REGISTER = '/api/open/auth/register',
